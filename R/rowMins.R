@@ -57,17 +57,52 @@ rowMins_C.init <- function() {
   code <- '
     int N = length(cols);
     int M = INTEGER(GET_DIM(x))[0];
+    int i, j;
+    int protect_n = 0;
+
+    if (N == 0) error("`cols` size should not be 0.");
+    if (INTEGER(cols)[0] < 0) {
+      int COLS = INTEGER(GET_DIM(x))[1];
+      int *which = (int*) R_alloc(INTSXP, COLS);
+      memset(which, 0, sizeof(int)*COLS);
+      for (i = 0; i < N; ++ i) {
+        int col = INTEGER(cols)[i];
+        if (col >= 0) continue;
+        col = -col;
+        if (col > COLS) continue;
+        which[col - 1] = 1;
+      }
+      N = 0;
+      for (i = 0; i < COLS; ++ i) {
+        if (which[i] == 0) ++ N;
+      }
+
+      PROTECT(cols = allocVector(INTSXP, N));
+      ++ protect_n;
+      j = 0;
+      for (i = 0; i < COLS; ++ i) {
+        if (which[i] == 0) {
+          INTEGER(cols)[j ++] = i + 1;
+        }
+      }
+    }
+
     SEXP res;
     if (isInteger(x)) PROTECT(res = allocVector(INTSXP, M));
     else if (isReal(x)) PROTECT(res = allocVector(REALSXP, M));
-    else error("Only Integer and Real are supported.");
-    for (int i = 0; i < M; ++ i) {
+    else {
+      UNPROTECT(protect_n);
+      error("Only Integer and Real are supported.");
+    }
+
+    ++ protect_n;
+    for (i = 0; i < M; ++ i) {
       int minValue_Integer;
       double minValue_Real;
       if (isInteger(x)) minValue_Integer = INTEGER(x)[i+M*(INTEGER(cols)[0]-1)];
       else if (isReal(x)) minValue_Real = REAL(x)[i+M*(INTEGER(cols)[0]-1)];
 
-      for (int j = 1; j < N; ++ j) {
+      for (j = 1; j < N; ++ j) {
         if (isInteger(x)) {
           int value = INTEGER(x)[i+M*(INTEGER(cols)[j]-1)];
           if (value < minValue_Integer) {
@@ -83,13 +118,13 @@ rowMins_C.init <- function() {
       if (isInteger(x)) INTEGER(res)[i] = minValue_Integer;
       else if (isReal(x)) REAL(res)[i] = minValue_Real;
     }
-    UNPROTECT(1);
+    UNPROTECT(protect_n);
     return res;
   '
   rowMins_C_Inline <- cfunction(sigFunc, code)
 }
 
-rowMins_C <- function(x, cols=dim(x)[2], ...) {
+rowMins_C <- function(x, cols=1:dim(x)[2], ...) {
   rowMins_C_Inline <- rowMins_C.init()
   rowMins_C_Inline(x, cols)
 }

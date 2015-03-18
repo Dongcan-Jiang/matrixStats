@@ -20,7 +20,7 @@
 \usage{
  rowMins_R(x, cols=1:dim(x)[2], ...)
  colMins_R(x, rows=1:dim(x)[1], ...)
- rowMins_C(x, cols=dim(x)[2], ...)
+ rowMins_C(x, cols=1:dim(x)[2], ...)
  colMins_C(x, rows=1:dim(x)[1], ...)
 }
 

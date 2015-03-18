@@ -5,9 +5,9 @@ library("matrixStats")
 # the R subprocesses. Unsetting it here avoids those problems.
 Sys.setenv("R_TESTS" = "")
 
-# Test for Integer
+# Test for Real
 x <- matrix(1:100+0.1, nrow=20, ncol=5)
-m0 <- rowMins(x[,4:2], na.rm=1)
+m0 <- rowMins(x[,4:2])
 m1 <- rowMins_R(x, 2:4)
 m2 <- colMins_R(t(x), 4:2)
 m3 <- rowMins_C(x, 4:2)
@@ -17,13 +17,37 @@ stopifnot(all.equal(m0, m2))
 stopifnot(all.equal(m0, m3))
 stopifnot(all.equal(m0, m4))
 
-# Test for Real
+# Test for Integer
 x <- matrix(1:100, nrow=20, ncol=5)
-m0 <- rowMins(x[,4:2], na.rm=1)
+m0 <- rowMins(x[,4:2])
 m1 <- rowMins_R(x, 2:4)
 m2 <- colMins_R(t(x), 4:2)
 m3 <- rowMins_C(x, 4:2)
 m4 <- colMins_C(t(x), 2:4)
+stopifnot(all.equal(m0, m1))
+stopifnot(all.equal(m0, m2))
+stopifnot(all.equal(m0, m3))
+stopifnot(all.equal(m0, m4))
+
+# Test for no cols
+x <- matrix(1:100, nrow=20, ncol=5)
+m0 <- rowMins(x)
+m1 <- rowMins_R(x)
+m2 <- colMins_R(t(x))
+m3 <- rowMins_C(x)
+m4 <- colMins_C(t(x))
+stopifnot(all.equal(m0, m1))
+stopifnot(all.equal(m0, m2))
+stopifnot(all.equal(m0, m3))
+stopifnot(all.equal(m0, m4))
+
+# Test for negative cols
+x <- matrix(1:100, nrow=20, ncol=5)
+m0 <- rowMins(x[,-(3:1)])
+m1 <- rowMins_R(x, -(1:3))
+m2 <- colMins_R(t(x), -(3:1))
+m3 <- rowMins_C(x, -(3:1))
+m4 <- colMins_C(t(x), -(1:3))
 stopifnot(all.equal(m0, m1))
 stopifnot(all.equal(m0, m2))
 stopifnot(all.equal(m0, m3))
