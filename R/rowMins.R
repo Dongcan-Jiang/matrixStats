@@ -129,8 +129,9 @@ rowMins_C <- function(x, cols=1:dim(x)[2], ...) {
   rowMins_C_Inline(x, cols)
 }
 
-colMins_C <- function(x, rows=1:dim(x)[1], ...) {
-  # Not supported yet. Just use the R version.
-  colMins_R(x, rows)
+colMins_C <- function(x, rows=1:dim(x)[1], cols=1:dim(x)[2], ...) {
+  ans <- .Call("colMins", x, rows, cols, PACKAGE='matrixStats')
+  storage.mode(ans) <- storage.mode(x)
+  ans
 }
 

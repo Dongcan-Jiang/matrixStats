@@ -11,6 +11,7 @@
 #if X_TYPE == 'i'
   #define X_C_TYPE int
   #define X_IN_C INTEGER
+  #define X_RC_XP INTSXP
   #define X_ISNAN(x) (x == NA_INTEGER)
   #define X_ISNA(x) (x == NA_INTEGER)
   #define X_ABS(x) abs(x)
@@ -19,6 +20,7 @@
 #elif X_TYPE == 'r'
   #define X_C_TYPE double
   #define X_IN_C REAL
+  #define X_RC_XP REALSXP
   #define X_ISNAN(x) ISNAN(x) /* NA or NaN */
   #define X_ISNA(x) ISNA(x) /* NA only */
   #define X_ABS(x) fabs(x)
@@ -26,7 +28,8 @@
   #define X_QSORT_I R_qsort_I
 #elif X_TYPE == 'l'
   #define X_C_TYPE int
-  #define X_IN_C LOGICAL
+  #define X_RC_C LOGICAL
+  #define X_TYPE_XP LGLSXP
   #define X_ISNAN(x) (x == NA_LOGICAL)
 #else
   #error "INTERNAL ERROR: Failed to set C macro X_C_TYPE etc.: Unknown X_TYPE"
