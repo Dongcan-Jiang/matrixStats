@@ -2,6 +2,8 @@
 #undef CONCAT_MACROS
 
 #undef METHOD_NAME
+#undef PTHREAD_METHOD_NAME
+#undef METHOD_NAME_WRAPPER
 
 #undef X_C_TYPE
 #undef X_IN_C

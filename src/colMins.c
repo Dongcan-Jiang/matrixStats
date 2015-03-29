@@ -17,8 +17,8 @@
 
 #undef METHOD
 
+SEXP colMins(SEXP x, SEXP rows, SEXP cols, SEXP cores) {
 
-SEXP colMins(SEXP x, SEXP rows, SEXP cols) {
   SEXP ans;
 
   R_xlen_t ROWS = xlength(rows);
@@ -26,17 +26,23 @@ SEXP colMins(SEXP x, SEXP rows, SEXP cols) {
 
   R_xlen_t M = INTEGER(GET_DIM(x))[0];
 
+  int CORES = asInteger(cores);
+
   /* Argument 'x': */
   assertArgVector(x, (R_TYPE_INT | R_TYPE_REAL), "x");
 
   /* Double matrices are more common to use. */
   if (isReal(x)) {
-    ans = colMins_Real(REAL(x), M, INTEGER(rows), ROWS, INTEGER(cols), COLS);
+    ans = PROTECT(allocVector(REALSXP, COLS));
+    pthread_colMins_Real(REAL(x), M, INTEGER(rows), ROWS, INTEGER(cols), COLS, CORES, REAL(ans));
 
   } else if (isInteger(x)) {
-    ans = colMins_Integer(INTEGER(x), M, INTEGER(rows), ROWS, INTEGER(cols), COLS);
-  }
+    ans = PROTECT(allocVector(REALSXP, COLS));
+    pthread_colMins_Integer(INTEGER(x), M, INTEGER(rows), ROWS, INTEGER(cols), COLS, CORES, INTEGER(ans));
 
+  } else error("Unsupported type");
+
+  UNPROTECT(1);
   return ans;
 } // colMins()
 

@@ -135,3 +135,11 @@ colMins_C <- function(x, rows=1:dim(x)[1], cols=1:dim(x)[2], ...) {
   ans
 }
 
+rowMins_New <- function(x, rows=1:dim(x)[1], cols=1:dim(x)[2], cores=1, ...) {
+  error('unsupported')
+}
+
+colMins_New <- function(x, rows=1:dim(x)[1], cols=1:dim(x)[2], cores=1, ...) {
+  ans <- .Call("colMins", x, rows, cols, cores, PACKAGE='matrixStats')
+}
+

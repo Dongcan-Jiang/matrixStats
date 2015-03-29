@@ -139,4 +139,9 @@
   #else
     #error "INTERNAL ERROR: Failed to set C macro METHOD_NAME: Unknown X_TYPE"
   #endif
+
+  #define PTHREAD_METHOD_NAME CONCAT_MACROS(pthread, METHOD_NAME)
+  #define METHOD_NAME_WRAPPER CONCAT_MACROS(METHOD_NAME, Wrapper)
+
 #endif
+

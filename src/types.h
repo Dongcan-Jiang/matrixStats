@@ -1,3 +1,6 @@
+#ifndef _TYPE_H_
+#define _TYPE_H_
+
 #include <Rinternals.h> /* R_xlen_t, ... */
 
 #ifndef R_INT_MIN
@@ -28,3 +31,5 @@
 
 /* Macro to check for user interrupts every 2^20 iteration */
 #define R_CHECK_USER_INTERRUPT(i) if (i % 1048576 == 0) R_CheckUserInterrupt()
+
+#endif

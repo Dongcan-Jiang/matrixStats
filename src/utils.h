@@ -1,3 +1,6 @@
+#ifndef _UTILS_H_
+#define _UTILS_H_
+
 #include <Rinternals.h>
 #include "types.h"
 
@@ -97,3 +100,8 @@ static R_INLINE int asLogicalNoNA(SEXP x, char *xlabel) {
   return value;
 } /* asLogicalNoNA() */
 
+
+#define max(x, y) (x < y ? y : x)
+#define min(x, y) (x < y ? x : y)
+
+#endif
