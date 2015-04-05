@@ -34,7 +34,7 @@ SEXP weightedVar(SEXP x, SEXP w, SEXP naRm, SEXP center) {
   if (isNull(w)) {
     PROTECT(w = allocVector(REALSXP, nx));
     protect_n ++;
-    for (R_xlen_t i = 0; i < nx; ++ i) REAL(w)[i] = 1;
+    for (i = 0; i < nx; ++ i) REAL(w)[i] = 1;
   }
 
   /* Argument 'w': */

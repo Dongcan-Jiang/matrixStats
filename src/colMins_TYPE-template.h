@@ -61,8 +61,9 @@ void PTHREAD_METHOD_NAME(X_C_TYPE *x, R_xlen_t M,
   pthread_t threads[CORES];
   int begin = 0;
   int GAP = (COLS + CORES - 1) / CORES;
+  int i;
 
-  for (int i = 0; i < CORES; ++ i) {
+  for (i = 0; i < CORES; ++ i) {
     // WARNING: Assume that sizeof(void*) >= sizeof(R_xlen_t)
     int end = min(begin + GAP, COLS);
     int *sub_cols = cols + begin;
@@ -83,7 +84,7 @@ void PTHREAD_METHOD_NAME(X_C_TYPE *x, R_xlen_t M,
     begin = end;
   }
 
-  for (int i = 0; i < CORES; ++ i) {
+  for (i = 0; i < CORES; ++ i) {
     pthread_join(threads[i], NULL);
   }
 }
