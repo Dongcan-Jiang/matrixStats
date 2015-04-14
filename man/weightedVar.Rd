@@ -18,7 +18,7 @@
 \title{Weighted variance and weighted standard deviation}
 
 \usage{
- weightedVar(x, w, na.rm=FALSE, center=NULL, ...)
+ weightedVar(x, w=NULL, na.rm=FALSE, center=NULL, ...)
  colWeightedVars(x, w=NULL, na.rm=FALSE, ...)
  rowWeightedVars(x, w=NULL, na.rm=FALSE, ...)
 

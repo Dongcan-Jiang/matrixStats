@@ -57,12 +57,12 @@
 # @keyword "univar"
 # @keyword "robust"
 #*/############################################################################
-weightedVar <- function(x, w, na.rm=FALSE, center=NULL, ...) {
+weightedVar <- function(x, w=NULL, na.rm=FALSE, center=NULL, ...) {
   # Argument 'x':
   n <- length(x);
 
   # Argument 'w':
-  if (missing(w)) {
+  if (is.null(w)) {
     # By default use weights that are one.
     w <- rep(1, times=n);
   } else if (length(w) != n) {
