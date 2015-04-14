@@ -78,7 +78,7 @@
 # }
 #
 # \author{
-#   Henrik Bengtsson and Ola Hossjer, Centre for Mathematical
+#   Henrik Bengtsson and Ola Hössjer, Centre for Mathematical
 #   Sciences, Lund University.
 #   Thanks to Roger Koenker, Econometrics, University of Illinois, for
 #   the initial ideas.
@@ -87,8 +87,14 @@
 # @keyword "univar"
 # @keyword "robust"
 #*/############################################################################
-weightedMedian <- function(x, w=rep(1, times=length(x)), na.rm=FALSE, interpolate=is.null(ties), ties=NULL, ...) {
+weightedMedian <- function(x, w=NULL, na.rm=FALSE, interpolate=is.null(ties), ties=NULL, ...) {
   # Argument 'x':
+  n <- length(x)
+
+  if (is.null(w)) {
+     w <- rep(1, times=n);
+  }
+  # the length of 'w' will be checked in weightedMedian.c
 
   # Argument 'w':
   w <- as.double(w)
