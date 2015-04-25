@@ -4,10 +4,12 @@
 
 
 X_C_TYPE* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs) {
+  /*
   if (idxs == NULL) {
     *ansNidxs = maxIdx;
     return NULL;
   }
+  */
 
   R_xlen_t ii, jj;
   int state = 0;
@@ -29,7 +31,7 @@ X_C_TYPE* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t 
 
   if (state >= 0) *ansNidxs = count;
   if (count == nidxs) return idxs; // must have: state >= 0
-  if (state == 0) return NULL;
+  if (state == 0) return (X_C_TYPE*) R_alloc(0, sizeof(X_C_TYPE)); // count == 0
 
   if (state > 0) {
     X_C_TYPE *ans = (X_C_TYPE*) R_alloc(count, sizeof(X_C_TYPE));

@@ -16,6 +16,10 @@
 
 
 void *validateIndices2(SEXP idxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs) {
+  if (isNull(idxs)) {
+    *ansNidxs = maxIdx;
+    return NULL;
+  }
   R_xlen_t nidxs = xlength(idxs);
   int mode = TYPEOF(idxs);
   switch (mode) {
@@ -28,10 +32,13 @@ void *validateIndices2(SEXP idxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs) {
     default:
       error("idxs can only be integer, numeric, or logical.");
   }
+  return NULL;
 }
 
 
 SEXP validate(SEXP idxs, SEXP maxIdx) {
+  if (isNull(idxs)) return R_NilValue;
+
   SEXP ans;
   R_xlen_t ansNidxs;
   R_xlen_t cmaxIdx = asInteger(maxIdx);
@@ -41,7 +48,7 @@ SEXP validate(SEXP idxs, SEXP maxIdx) {
   switch (mode) {
     case INTSXP: {
       int *cidxs = validateIndices2_Integer(INTEGER(idxs), nidxs, cmaxIdx, &ansNidxs);
-      if (cidxs == NULL && ansNidxs) return R_NilValue;
+//      if (cidxs == NULL && ansNidxs) return R_NilValue;
       ans = PROTECT(allocVector(INTSXP, ansNidxs));
       memcpy(INTEGER(ans), cidxs, ansNidxs*sizeof(int));
       UNPROTECT(1);
@@ -49,7 +56,7 @@ SEXP validate(SEXP idxs, SEXP maxIdx) {
     }
     case REALSXP: {
       double *cidxs = validateIndices2_Real(REAL(idxs), nidxs, cmaxIdx, &ansNidxs);
-      if (cidxs == NULL && ansNidxs) return R_NilValue;
+//      if (cidxs == NULL && ansNidxs) return R_NilValue;
       ans = PROTECT(allocVector(REALSXP, ansNidxs));
       memcpy(REAL(ans), cidxs, ansNidxs*sizeof(double));
       UNPROTECT(1);
@@ -57,9 +64,9 @@ SEXP validate(SEXP idxs, SEXP maxIdx) {
     }
     case LGLSXP: {
       R_xlen_t *cidxs = validateIndices2_Logical(LOGICAL(idxs), nidxs, cmaxIdx, &ansNidxs);
-      if (cidxs == NULL && ansNidxs) return R_NilValue;
+//      if (cidxs == NULL && ansNidxs) return R_NilValue;
       ans = PROTECT(allocVector(REALSXP, ansNidxs));
-      int ii;
+      R_xlen_t ii;
       for (ii = 0; ii < ansNidxs; ++ ii) REAL(ans)[ii] = cidxs[ii];
       UNPROTECT(1);
       return ans;
