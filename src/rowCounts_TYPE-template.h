@@ -155,9 +155,6 @@ RETURN_TYPE METHOD_NAME_ROWS_COLS(ARGUMENTS_LIST) {
   } /* if (what ...) */
 }
 
-/* Undo template macros */
-//#include "templates-types_undef.h"
-
 
 /***************************************************************************
  HISTORY:

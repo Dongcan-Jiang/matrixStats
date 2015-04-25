@@ -1,16 +1,30 @@
-#include <Rdefines.h>
+/***********************************************************************
+ TEMPLATE:
+  void validateIndices_<Integer|Real|Logical>[ROWS_TYPE][COLS_TYPE](X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs)
+
+ GENERATES:
+  void validateIndices_Real[ROWS_TYPE][COLS_TYPE](double *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs)
+  void validateIndices_Integer[ROWS_TYPE][COLS_TYPE](int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs)
+  void validateIndices_Logical[ROWS_TYPE][COLS_TYPE](int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs)
+
+ Arguments:
+   The following macros ("arguments") should be defined for the 
+   template to work as intended.
+
+  - METHOD_NAME: the name of the resulting function
+  - X_TYPE: 'i', 'r', or 'l'
+
+ ***********************************************************************/ 
 #include "types.h"
+
+/* Expand arguments:
+    X_TYPE => (X_C_TYPE, X_IN_C, [METHOD_NAME])
+ */
 #include "templates-types.h"
 
 
+/** idxs must not be NULL, which should be checked before calling this function. **/
 X_C_TYPE* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs) {
-  /*
-  if (idxs == NULL) {
-    *ansNidxs = maxIdx;
-    return NULL;
-  }
-  */
-
   R_xlen_t ii, jj;
   int state = 0;
   R_xlen_t count = 0;
@@ -69,30 +83,5 @@ X_C_TYPE* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t 
   return ans;
 }
 
-
-#ifndef _LOGICAL_VALIDATE_INDICES_
-#define _LOGICAL_VALIDATE_INDICES_
-R_xlen_t* validateIndices2_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs) {
-  if (nidxs == 1) {
-    *ansNidxs = idxs[0] ? maxIdx : 0;
-    return NULL;
-  }
-
-  R_xlen_t ii, jj;
-  R_xlen_t count = 0;
-  R_xlen_t n = nidxs;
-  if (n > maxIdx) n = maxIdx;
-  for (ii = 0; ii < n; ++ ii) {
-    if (idxs[ii]) ++ count;
-  }
-  *ansNidxs = count;
-  R_xlen_t *ans = (R_xlen_t*) R_alloc(count, sizeof(R_xlen_t));
-  jj = 0;
-  for (ii = 0; ii < n; ++ ii) {
-    if (idxs[ii]) ans[jj ++] = ii + 1;
-  }
-  return ans;
-}
-#endif
 
 #include "templates-types_undef.h"

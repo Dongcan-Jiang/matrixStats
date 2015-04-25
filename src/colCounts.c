@@ -18,8 +18,6 @@
 #define X_TYPE_L
 #include "templates-gen.h"
 
-#undef METHOD
-
 
 SEXP colCounts(SEXP x, SEXP dim, SEXP value, SEXP what, SEXP naRm, SEXP hasNA, SEXP rows, SEXP cols) {
   SEXP ans;
@@ -39,8 +37,8 @@ SEXP colCounts(SEXP x, SEXP dim, SEXP value, SEXP what, SEXP naRm, SEXP hasNA, S
     error("Argument 'value' must be a numeric value.");
 
   R_xlen_t nrows, ncols;
-  void *crows = validateIndices2(rows, nrow, &nrows);
-  void *ccols = validateIndices2(cols, ncol, &ncols);
+  void *crows = validateIndices(rows, nrow, &nrows);
+  void *ccols = validateIndices(cols, ncol, &ncols);
   int rowsType = modeSubsettedIndex(rows, crows);
   int colsType = modeSubsettedIndex(cols, ccols);
 
@@ -88,7 +86,7 @@ SEXP count(SEXP x, SEXP value, SEXP what, SEXP naRm, SEXP hasNA, SEXP idxs) {
 
   R_xlen_t nrows = 1, ncols;
   void *crows = NULL;
-  void *ccols = validateIndices2(idxs, nx, &ncols);
+  void *ccols = validateIndices(idxs, nx, &ncols);
   int rowsType = 0; // noRows
   int colsType = modeSubsettedIndex(idxs, ccols);
 

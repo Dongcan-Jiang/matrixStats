@@ -6,16 +6,40 @@
 #include <string.h>
 #include "utils.h"
 
-#define METHOD validateIndices2
+#define METHOD validateIndices
 
 #define X_TYPE 'i'
-#include "validate_TYPE-template.h"
+#include "validateIndices_TYPE-template.h"
 
 #define X_TYPE 'r'
-#include "validate_TYPE-template.h"
+#include "validateIndices_TYPE-template.h"
 
 
-void *validateIndices2(SEXP idxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs) {
+/** idxs must not be NULL, which should be checked before calling this function. **/
+R_xlen_t* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs) {
+  if (nidxs == 1) {
+    *ansNidxs = idxs[0] ? maxIdx : 0;
+    return NULL;
+  }
+
+  R_xlen_t ii, jj;
+  R_xlen_t count = 0;
+  R_xlen_t n = nidxs;
+  if (n > maxIdx) n = maxIdx;
+  for (ii = 0; ii < n; ++ ii) {
+    if (idxs[ii]) ++ count;
+  }
+  *ansNidxs = count;
+  R_xlen_t *ans = (R_xlen_t*) R_alloc(count, sizeof(R_xlen_t));
+  jj = 0;
+  for (ii = 0; ii < n; ++ ii) {
+    if (idxs[ii]) ans[jj ++] = ii + 1;
+  }
+  return ans;
+}
+
+
+void *validateIndices(SEXP idxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs) {
   if (isNull(idxs)) {
     *ansNidxs = maxIdx;
     return NULL;
@@ -24,11 +48,11 @@ void *validateIndices2(SEXP idxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs) {
   int mode = TYPEOF(idxs);
   switch (mode) {
     case INTSXP:
-      return validateIndices2_Integer(INTEGER(idxs), nidxs, maxIdx, ansNidxs);
+      return validateIndices_Integer(INTEGER(idxs), nidxs, maxIdx, ansNidxs);
     case REALSXP:
-      return validateIndices2_Real(REAL(idxs), nidxs, maxIdx, ansNidxs);
+      return validateIndices_Real(REAL(idxs), nidxs, maxIdx, ansNidxs);
     case LGLSXP:
-      return validateIndices2_Logical(LOGICAL(idxs), nidxs, maxIdx, ansNidxs);
+      return validateIndices_Logical(LOGICAL(idxs), nidxs, maxIdx, ansNidxs);
     default:
       error("idxs can only be integer, numeric, or logical.");
   }
@@ -47,7 +71,7 @@ SEXP validate(SEXP idxs, SEXP maxIdx) {
   int mode = TYPEOF(idxs);
   switch (mode) {
     case INTSXP: {
-      int *cidxs = validateIndices2_Integer(INTEGER(idxs), nidxs, cmaxIdx, &ansNidxs);
+      int *cidxs = validateIndices_Integer(INTEGER(idxs), nidxs, cmaxIdx, &ansNidxs);
 //      if (cidxs == NULL && ansNidxs) return R_NilValue;
       ans = PROTECT(allocVector(INTSXP, ansNidxs));
       memcpy(INTEGER(ans), cidxs, ansNidxs*sizeof(int));
@@ -55,7 +79,7 @@ SEXP validate(SEXP idxs, SEXP maxIdx) {
       return ans;
     }
     case REALSXP: {
-      double *cidxs = validateIndices2_Real(REAL(idxs), nidxs, cmaxIdx, &ansNidxs);
+      double *cidxs = validateIndices_Real(REAL(idxs), nidxs, cmaxIdx, &ansNidxs);
 //      if (cidxs == NULL && ansNidxs) return R_NilValue;
       ans = PROTECT(allocVector(REALSXP, ansNidxs));
       memcpy(REAL(ans), cidxs, ansNidxs*sizeof(double));
@@ -63,7 +87,7 @@ SEXP validate(SEXP idxs, SEXP maxIdx) {
       return ans;
     }
     case LGLSXP: {
-      R_xlen_t *cidxs = validateIndices2_Logical(LOGICAL(idxs), nidxs, cmaxIdx, &ansNidxs);
+      R_xlen_t *cidxs = validateIndices_Logical(LOGICAL(idxs), nidxs, cmaxIdx, &ansNidxs);
 //      if (cidxs == NULL && ansNidxs) return R_NilValue;
       ans = PROTECT(allocVector(REALSXP, ansNidxs));
       R_xlen_t ii;
