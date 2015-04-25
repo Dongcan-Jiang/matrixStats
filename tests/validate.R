@@ -52,21 +52,21 @@ stopifnot(identical(y, integer(0)))
 
 
 # idxs is NULL
-y <- validate(NULL, 5)
-stopifnot(identical(y, 1:5))
+#y <- validate(NULL, 5)
+#stopifnot(identical(y, 1:5))
 
-y <- validate(, 5)
-stopifnot(identical(y, 1:5))
+#y <- validate(, 5)
+#stopifnot(identical(y, 1:5))
 
 
 # N is 0
-tools::assertError(validate(4:4, 0))
+#tools::assertError(validate(4:4, 0))
 
-y <- validate(-4:-4, 0)
-stopifnot(identical(y, integer(0)))
+#y <- validate(-4:-4, 0)
+#stopifnot(identical(y, integer(0)))
 
-y <- validate(0:0, 0)
-stopifnot(identical(y, integer(0)))
+#y <- validate(0:0, 0)
+#stopifnot(identical(y, integer(0)))
 
 
 # NA in idxs

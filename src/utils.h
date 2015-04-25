@@ -98,6 +98,29 @@ static R_INLINE int asLogicalNoNA(SEXP x, char *xlabel) {
 } /* asLogicalNoNA() */
 
 
+static R_INLINE int modeSubsettedIndex(SEXP x, void *idxs) {
+  if (idxs == NULL) return 0;
+  int mode = TYPEOF(x);
+  switch (mode) {
+    case INTSXP: return 1;
+    case REALSXP: return 2;
+    case LGLSXP: return 3;
+    default: error("only integer, numeric, logical are supported.");
+  }
+}
+
+
+static R_INLINE R_xlen_t asR_xlen_t(SEXP x, R_xlen_t i) {
+  int mode = TYPEOF(x);
+  switch (mode) {
+    case INTSXP: return INTEGER(x)[i];
+    case REALSXP: return REAL(x)[i];
+    default: error("only integer and numeric are supported.");
+  }
+  return 0;
+}
+
+
 /** idxs must not be NULL, which should be checked before calling this function. **/
 static R_INLINE int* validateIndices(SEXP idxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs) {
   assertArgVector(idxs, R_TYPE_INT, "idxs");
@@ -162,4 +185,5 @@ static R_INLINE int* validateIndices(SEXP idxs, R_xlen_t maxIdx, R_xlen_t *ansNi
   return ans;
 }
 
+void *validateIndices2(SEXP idxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs);
 

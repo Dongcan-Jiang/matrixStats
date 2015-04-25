@@ -11,11 +11,11 @@
 
 #define METHOD rowCounts
 #define RETURN_TYPE void
-#define ARGUMENTS_LIST X_C_TYPE *x, R_xlen_t nrow, R_xlen_t ncol, X_C_TYPE value, int what, int narm, int hasna, int *ans, int *rows, R_xlen_t nrows, int *cols, R_xlen_t ncols
+#define ARGUMENTS_LIST X_C_TYPE *x, R_xlen_t nrow, R_xlen_t ncol, X_C_TYPE value, int what, int narm, int hasna, int *ans, void *rows, R_xlen_t nrows, void *cols, R_xlen_t ncols
 
 #define X_TYPE_I
-#define X_TYPE_R
-#define X_TYPE_L
+//#define X_TYPE_R
+//#define X_TYPE_L
 #include "templates-gen.h"
 
 #undef METHOD
@@ -38,18 +38,11 @@ SEXP rowCounts(SEXP x, SEXP dim, SEXP value, SEXP what, SEXP naRm, SEXP hasNA, S
   if (!isNumeric(value))
     error("Argument 'value' must be a numeric value.");
 
-  R_xlen_t nrows = nrow, ncols = ncol;
-  int *crows = NULL, *ccols = NULL;
-  BOOL hasRows = 0, hasCols = 0;
-
-  if (!isNull(rows)) {
-    crows = validateIndices(rows, nrow, &nrows);
-    hasRows = 1;
-  }
-  if (!isNull(cols)) {
-    ccols = validateIndices(cols, ncol, &ncols);
-    hasCols = 1;
-  }
+  R_xlen_t nrows, ncols;
+  void *crows = validateIndices2(rows, nrow, &nrows);
+  void *ccols = validateIndices2(cols, ncol, &ncols);
+  int rowsType = modeSubsettedIndex(rows, crows);
+  int colsType = modeSubsettedIndex(cols, ccols);
 
   /* Argument 'what': */
   what2 = asInteger(what);
@@ -64,13 +57,13 @@ SEXP rowCounts(SEXP x, SEXP dim, SEXP value, SEXP what, SEXP naRm, SEXP hasNA, S
   PROTECT(ans = allocVector(INTSXP, nrows));
 
   /* Double matrices are more common to use. */
-  if (isReal(x)) {
-    rowCounts_Real[hasRows][hasCols](REAL(x), nrow, ncol, asReal(value), what2, narm, hasna, INTEGER(ans), crows, nrows, ccols, ncols);
-  } else if (isInteger(x)) {
-    rowCounts_Integer[hasRows][hasCols](INTEGER(x), nrow, ncol, asInteger(value), what2, narm, hasna, INTEGER(ans), crows, nrows, ccols, ncols);
-  } else if (isLogical(x)) {
-    rowCounts_Logical[hasRows][hasCols](LOGICAL(x), nrow, ncol, asLogical(value), what2, narm, hasna, INTEGER(ans), crows, nrows, ccols, ncols);
-  }
+  /*if (isReal(x)) {
+    rowCounts_Real[rowsType][colsType](REAL(x), nrow, ncol, asReal(value), what2, narm, hasna, INTEGER(ans), crows, nrows, ccols, ncols);
+  } else*/ if (isInteger(x)) {
+    rowCounts_Integer[rowsType][colsType](INTEGER(x), nrow, ncol, asInteger(value), what2, narm, hasna, INTEGER(ans), crows, nrows, ccols, ncols);
+  }/* else if (isLogical(x)) {
+    rowCounts_Logical[rowsType][colsType](LOGICAL(x), nrow, ncol, asLogical(value), what2, narm, hasna, INTEGER(ans), crows, nrows, ccols, ncols);
+  }*/
 
   UNPROTECT(1);
 
