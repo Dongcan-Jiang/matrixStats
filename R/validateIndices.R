@@ -1,5 +1,5 @@
 ############################################################################/**
-# @RdocFunction validate
+# @RdocFunction validateIndices
 #
 # @title "Validate indices"
 #
@@ -16,8 +16,8 @@
 #   Returns a validated integers list indicating the indices.
 # }
 #
-# @examples "../incl/validate.Rex"
+# @examples "../incl/validateIndices.Rex"
 #*/############################################################################
-validate <- function(idxs=NULL, maxIdx) {
+validateIndices <- function(idxs=NULL, maxIdx) {
   .Call('validate', idxs, maxIdx, PACKAGE='matrixStats')
 }

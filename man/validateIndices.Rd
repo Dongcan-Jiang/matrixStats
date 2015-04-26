@@ -1,13 +1,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  validate.R
+%  validateIndices.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{validate}
-\alias{validate}
+\name{validateIndices}
+\alias{validateIndices}
 
 
 \title{Validate indices}
@@ -26,9 +26,9 @@
 }
 
 \examples{
-idxs <- validate(as.integer(c(-4, 0, -3, -1)), 5)     # [2,5]
+idxs <- validateIndices(c(-4, 0, -3, -1), 5)     # [2,5]
 
-idxs <- validate(as.integer(c(4, 4, 8, 2, 3)), 8)     # [4, 4, 8, 2, 3]
+idxs <- validateIndices(c(4, 4, 8, 2, 3), 8)     # [4, 4, 8, 2, 3]
 
 
 }
