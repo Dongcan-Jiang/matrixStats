@@ -8,6 +8,15 @@
 
 #define METHOD validateIndices
 
+#define RETURN_VALIDATED_ANS(type, n, cond, item) \
+type *ans = (type*) R_alloc(count, sizeof(type)); \
+jj = 0;                                           \
+for (ii = 0; ii < n; ++ ii) {                     \
+  if (cond) ans[jj ++] = item;                    \
+}                                                 \
+return ans
+
+
 #define X_TYPE 'i'
 #define SUBSETTED_DEFAULT SUBSETTED_INTEGER
 #include "validateIndices_TYPE-template.h"
@@ -47,28 +56,11 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen
 
   // fill TURE idxs into ans
   if (*subsettedType == SUBSETTED_INTEGER) {
+    // NOTE: braces is needed here, because of macro-defined function
     RETURN_VALIDATED_ANS(int, n, idxs[ii], ii + 1);
-    /*
-    int *ans = (int*) R_alloc(count, sizeof(int));
-    jj = 0;
-    for (ii = 0; ii < n; ++ ii) {
-      if (idxs[ii]) ans[jj ++] = ii + 1;
-    }
-    return ans;
-    */
-
   }
   // *subsettedType == SUBSETTED_REAL
   RETURN_VALIDATED_ANS(double, n, idxs[ii], ii + 1);
-    /*
-    double *ans = (double*) R_alloc(count, sizeof(double));
-    jj = 0;
-    for (ii = 0; ii < n; ++ ii) {
-      if (idxs[ii]) ans[jj ++] = ii + 1;
-    }
-    return ans;
-  }
-    */
 }
 
 

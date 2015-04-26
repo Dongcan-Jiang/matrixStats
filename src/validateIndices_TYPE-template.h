@@ -22,17 +22,6 @@
 #include "templates-types.h"
 
 
-#ifndef RETURN_VALIDATED_ANS
-#define RETURN_VALIDATED_ANS(type, n, cond, item) \
-type *ans = (type*) R_alloc(count, sizeof(type)); \
-jj = 0;                                           \
-for (ii = 0; ii < n; ++ ii) {                     \
-  if (cond) ans[jj ++] = item;                    \
-}                                                 \
-return ans
-#endif
-
-
 /** idxs must not be NULL, which should be checked before calling this function. **/
 void* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs, int *subsettedType) {
   // For a un-full positive legal idxs array, we should use SUBSETTED_INTEGER as default.
@@ -42,6 +31,7 @@ void* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ans
   int state = 0;
   R_xlen_t count = 0;
 
+  // figure out whether idxs are all positive or all negative.
   for (ii = 0; ii < nidxs; ++ ii) {
     X_C_TYPE idx = idxs[ii];
     if (idx > 0 || X_ISNAN(idx)) {
@@ -68,34 +58,18 @@ void* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ans
     return idxs;
   }
 
+  // fill positive idxs into ans
   if (state >= 0) {
     if (*subsettedType == SUBSETTED_INTEGER) {
+      // NOTE: braces is needed here, because of macro-defined function
       RETURN_VALIDATED_ANS(int, nidxs, idxs[ii], idxs[ii]);
-      /*
-      int *ans = (int*) R_alloc(count, sizeof(int));
-      jj = 0;
-      for (ii = 0; ii < nidxs; ++ ii) {
-        // idxs[ii] can be positive or 0
-        if (idxs[ii]) ans[jj ++] = idxs[ii];
-      }
-      return ans;
-      */
-
-    } else {
-      RETURN_VALIDATED_ANS(double, nidxs, idxs[ii], idxs[ii]);
-      /*
-      double *ans = (double*) R_alloc(count, sizeof(double));
-      jj = 0;
-      for (ii = 0; ii < nidxs; ++ ii) {
-        // idxs[ii] can be positive or 0
-        if (idxs[ii]) ans[jj ++] = idxs[ii];
-      }
-      return ans;
-      */
     }
+    // *subsettedType == SUBSETTED_REAL
+    RETURN_VALIDATED_ANS(double, nidxs, idxs[ii], idxs[ii]);
   }
 
   // state < 0
+  // use filter as bitset to find out all required idxs
   BOOL filter[maxIdx];
   count = maxIdx;
   memset(filter, 0, sizeof(filter));
@@ -112,6 +86,7 @@ void* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ans
   *ansNidxs = count;
   if (count == 0) return NULL;
 
+  // find the biggest number 'upperBound'
   R_xlen_t upperBound;
   for (upperBound = maxIdx-1; upperBound >= 0; -- upperBound) {
     if (!filter[upperBound]) break;
@@ -119,28 +94,13 @@ void* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ans
   ++ upperBound;
   if (upperBound > R_INT_MAX) *subsettedType = SUBSETTED_REAL;
 
+  // fill required idxs into ans
   if (*subsettedType == SUBSETTED_INTEGER) {
+    // NOTE: braces is needed here, because of macro-defined function
     RETURN_VALIDATED_ANS(int, upperBound, !filter[ii], ii + 1);
-    /*
-    int *ans = (int*) R_alloc(count, sizeof(int));
-    jj = 0;
-    for (ii = 0; ii < upperBound; ++ ii) {
-      if (!filter[ii]) ans[jj ++] = ii + 1;
-    }
-    return ans;
-    */
-
-  } else {
-    RETURN_VALIDATED_ANS(double, upperBound, !filter[ii], ii + 1);
-    /*
-    double *ans = (double*) R_alloc(count, sizeof(double));
-    jj = 0;
-    for (ii = 0; ii < upperBound; ++ ii) {
-      if (!filter[ii]) ans[jj ++] = ii + 1;
-    }
-    return ans;
-    */
-  }
+  } 
+  // *subsettedType == SUBSETTED_REAL
+  RETURN_VALIDATED_ANS(double, upperBound, !filter[ii], ii + 1);
 }
 
 
