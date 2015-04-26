@@ -42,7 +42,7 @@ void* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ans
         if (idx > R_XLEN_T_MAX) Rf_error("%d exceeds R_XLEN_T_MAX", idx);
         if (idx > R_INT_MAX) *subsettedType = SUBSETTED_REAL;
 #endif
-      }
+      } else error("NA index is not supported"); // NOTE: currently
       state = 1;
       ++ count;
 

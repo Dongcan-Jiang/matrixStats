@@ -50,8 +50,10 @@ for (mode in c("integer", "numeric")) {
   validateIndicesTest(X, c(), mode)
 
   # NA in idxs
-  validateIndicesTest(X, c(NA, -2), mode)
-  validateIndicesTest(X, c(NA, 0, 2), mode)
+  # validateIndicesTest(X, c(NA, -2), mode)
+  # validateIndicesTest(X, c(NA, 0, 2), mode)
+  validateIndicesTest(X, c(NA, -2), mode, "error")
+  validateIndicesTest(X, c(NA, 0, 2), mode, "error")
 
   # idxs is single NA
   # validateIndicesTest(X, NA, mode)
