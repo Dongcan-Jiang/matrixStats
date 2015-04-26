@@ -35,6 +35,7 @@ return ans
 
 /** idxs must not be NULL, which should be checked before calling this function. **/
 void* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs, int *subsettedType) {
+  // For a un-full positive legal idxs array, we should use SUBSETTED_INTEGER as default.
   *subsettedType = SUBSETTED_INTEGER;
 
   R_xlen_t ii, jj;
@@ -42,8 +43,8 @@ void* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ans
   R_xlen_t count = 0;
 
   for (ii = 0; ii < nidxs; ++ ii) {
-    R_xlen_t idx = idxs[ii];
-    if (idx > 0 || X_ISNAN(idxs[ii])) {
+    X_C_TYPE idx = idxs[ii];
+    if (idx > 0 || X_ISNAN(idx)) {
       if (!X_ISNAN(idx)) {
         if (state < 0) error("only 0's may be mixed with negative subscripts");
         if (idx > maxIdx) error("subscript out of bounds");

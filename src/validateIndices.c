@@ -22,12 +22,19 @@
 /** idxs must not be NULL, which should be checked before calling this function. **/
 void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs, int *subsettedType) {
   // Single TRUE: select all
-  if (nidxs == 1 && idxs[0]) return NULL;
+  if (nidxs == 1 && idxs[0]) {
+    *ansNidxs = maxIdx;
+    *subsettedType = SUBSETTED_ALL;
+    return NULL;
+  }
 
   R_xlen_t ii, jj;
   R_xlen_t count = 0;
   R_xlen_t n = nidxs;
   if (n > maxIdx) n = maxIdx; // n = min(nidxs, maxIdx)
+
+  // set default type as SUBSETTED_INTEGER
+  *subsettedType = SUBSETTED_INTEGER;
 
   // count how many idx items
   for (ii = 0; ii < n; ++ ii) {
@@ -50,8 +57,9 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen
     return ans;
     */
 
-  } else {
-    RETURN_VALIDATED_ANS(double, n, idxs[ii], ii + 1);
+  }
+  // *subsettedType == SUBSETTED_REAL
+  RETURN_VALIDATED_ANS(double, n, idxs[ii], ii + 1);
     /*
     double *ans = (double*) R_alloc(count, sizeof(double));
     jj = 0;
@@ -59,8 +67,8 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen
       if (idxs[ii]) ans[jj ++] = ii + 1;
     }
     return ans;
-    */
   }
+    */
 }
 
 
@@ -117,7 +125,7 @@ SEXP validate(SEXP idxs, SEXP maxIdx) {
       break;
     case LGLSXP:
       cidxs = validateIndices_Logical(LOGICAL(idxs), nidxs, cmaxIdx, &ansNidxs, &subsettedType);
-      break;
+      if (subsettedType != SUBSETTED_ALL) break;
     case NILSXP:
       return R_NilValue;
     default:
