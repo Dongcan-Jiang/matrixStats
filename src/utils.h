@@ -98,18 +98,6 @@ static R_INLINE int asLogicalNoNA(SEXP x, char *xlabel) {
 } /* asLogicalNoNA() */
 
 
-static R_INLINE int modeSubsettedIndex(SEXP x, void *idxs) {
-  if (idxs == NULL) return 0;
-  int mode = TYPEOF(x);
-  switch (mode) {
-    case INTSXP: return 1;
-    case REALSXP: return 2;
-    case LGLSXP: return 3;
-    default: error("only integer, numeric, logical are supported.");
-  }
-}
-
-
 static R_INLINE R_xlen_t asR_xlen_t(SEXP x, R_xlen_t i) {
   int mode = TYPEOF(x);
   switch (mode) {
@@ -121,5 +109,5 @@ static R_INLINE R_xlen_t asR_xlen_t(SEXP x, R_xlen_t i) {
 }
 
 
-void *validateIndices(SEXP idxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs);
+void *validateIndices(SEXP idxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs, int *type);
 

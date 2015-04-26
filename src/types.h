@@ -12,6 +12,15 @@
 #define BOOL unsigned char
 #endif
 
+#ifndef SUBSETTED_MODE_INDEX
+#define SUBSETTED_MODE_INDEX
+
+#define SUBSETTED_ALL 0
+#define SUBSETTED_INTEGER 1
+#define SUBSETTED_REAL 2
+
+#endif
+
 /* As in <R>/src/include/Defn.h */
 #ifdef HAVE_LONG_DOUBLE
 #define LDOUBLE long double

@@ -1,76 +1,42 @@
 library(matrixStats)
 
+validateIndicesTest <- function(x, idxs, mode, expect) {
+  storage.mode(idxs) <- mode
 
-# positives and negatives mixing.
-tools::assertError(validateIndices(1:-1, 1))
-tools::assertError(validateIndices(-1:1, 1))
-tools::assertError(validateIndices(c(1, 0, 0, -4), 2))
-tools::assertError(validateIndices(c(-4, 0, 0, 1), 6))
+  y <- tryCatch(validateIndices(idxs, length(x)), error=function(c) "error")
+  if (missing(expect))
+    expect <- tryCatch(x[idxs], error=function(c) "error")
 
+  stopifnot(identical(y, expect))
+}
 
-# negative indices
-y <- validateIndices(c(-4, 0, -3, -1), 5)
-stopifnot(identical(y, c(2, 5)))
+#for (mode in c("integer", "numeric")) {
+  mode <- "integer"
+  x <- 1:5
 
+  # mixed positive and negative indices
+  validateIndicesTest(x, 1:-1, mode)
+  validateIndicesTest(x, -1:1, mode)
 
-# positive indices
-y <- validateIndices(c(4, 4, 8, 2, 3), 8)
-stopifnot(identical(y, c(4, 4, 8, 2, 3)))
+  # midex positive, negative and zero indices
+  validateIndicesTest(x, c(1, 0, 0, -6), mode)
+  validateIndicesTest(x, c(-4, 0, 0, 1), mode)
 
-validateIndices(c(4, 4, 8, 2, 3), 9)
-stopifnot(identical(y, c(4, 4, 8, 2, 3)))
+  # negative indices with duplicates
+  validateIndicesTest(x, c(-4, 0, 0, -3, -1, -3, -1), mode)
 
+  # positive indices
+  validateIndicesTest(x, c(3, 5, 1), mode)
 
-# positive out of ranges
-tools::assertError(validateIndices(c(4, 4, 8, 2, 3), 7))
+  # positive indices with duplicates
+  validateIndicesTest(x, c(3, 5, 1, 5, 5), mode)
 
+  # positive indices out of ranges
+  validateIndicesTest(x, 4:9, mode, "error")
 
-# negative out of ranges
-y <- validateIndices(c(-4, 0, -3, -1), 3)
-stopifnot(identical(y, c(2)))
-
-
-# negative indices exclude all
-y <- validateIndices(c(-4, 0, -3, -1, -2, 0), 3)
-stopifnot(identical(y, numeric(0)))
-
-
-# idxs is single integer
-y <- validateIndices(4, 5)
-stopifnot(identical(y, c(4)))
-
-y <- validateIndices(-4, 5)
-stopifnot(identical(y, c(1, 2, 3, 5)))
-
-y <- validateIndices(0, 5)
-stopifnot(identical(y, numeric(0)))
+  # negative out of ranges: just ignore
+  validateIndicesTest(x, c(-5, 0, -3, -1), mode)
 
 
-# idxs is empty
-y <- validateIndices(numeric(0), 5)
-stopifnot(identical(y, numeric(0)))
 
-
-# idxs is NULL
-#y <- validateIndices(NULL, 5)
-#stopifnot(identical(y, 1:5))
-
-#y <- validateIndices(, 5)
-#stopifnot(identical(y, 1:5))
-
-
-# N is 0
-#tools::assertError(validateIndices(4:4, 0))
-
-#y <- validateIndices(-4:-4, 0)
-#stopifnot(identical(y, integer(0)))
-
-#y <- validateIndices(0:0, 0)
-#stopifnot(identical(y, integer(0)))
-
-
-# NA in idxs
-tools::assertError(validateIndices(c(NA, -2), 2))
-
-y <- validateIndices(c(NA, 0, 2), 2)
-stopifnot(identical(y, c(NA, 2)))
+#}

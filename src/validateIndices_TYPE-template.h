@@ -1,11 +1,10 @@
 /***********************************************************************
  TEMPLATE:
-  void validateIndices_<Integer|Real|Logical>[ROWS_TYPE][COLS_TYPE](X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs)
+  void validateIndices_<Integer|Real>[ROWS_TYPE][COLS_TYPE](X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs)
 
  GENERATES:
   void validateIndices_Real[ROWS_TYPE][COLS_TYPE](double *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs)
   void validateIndices_Integer[ROWS_TYPE][COLS_TYPE](int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs)
-  void validateIndices_Logical[ROWS_TYPE][COLS_TYPE](int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs)
 
  Arguments:
    The following macros ("arguments") should be defined for the 
@@ -23,16 +22,35 @@
 #include "templates-types.h"
 
 
+#ifndef RETURN_VALIDATED_ANS
+#define RETURN_VALIDATED_ANS(type, n, cond, item) \
+type *ans = (type*) R_alloc(count, sizeof(type)); \
+jj = 0;                                           \
+for (ii = 0; ii < n; ++ ii) {                     \
+  if (cond) ans[jj ++] = item;                    \
+}                                                 \
+return ans
+#endif
+
+
 /** idxs must not be NULL, which should be checked before calling this function. **/
-X_C_TYPE* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs) {
+void* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs, int *subsettedType) {
+  *subsettedType = SUBSETTED_INTEGER;
+
   R_xlen_t ii, jj;
   int state = 0;
   R_xlen_t count = 0;
+
   for (ii = 0; ii < nidxs; ++ ii) {
-    if (idxs[ii] > 0 || X_ISNAN(idxs[ii])) {
-      if (!X_ISNAN(idxs[ii])) {
+    R_xlen_t idx = idxs[ii];
+    if (idx > 0 || X_ISNAN(idxs[ii])) {
+      if (!X_ISNAN(idx)) {
         if (state < 0) error("only 0's may be mixed with negative subscripts");
-        if (idxs[ii] > maxIdx) error("subscript out of bounds");
+        if (idx > maxIdx) error("subscript out of bounds");
+#if X_TYPE == 'r'
+        if (idx > R_XLEN_T_MAX) Rf_error("%d exceeds R_XLEN_T_MAX", idx);
+        if (idx > R_INT_MAX) *subsettedType = SUBSETTED_REAL;
+#endif
       }
       state = 1;
       ++ count;
@@ -44,17 +62,36 @@ X_C_TYPE* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t 
   }
 
   if (state >= 0) *ansNidxs = count;
-  if (count == nidxs) return idxs; // must have: state >= 0
-  if (state == 0) return (X_C_TYPE*) R_alloc(0, sizeof(X_C_TYPE)); // count == 0
+  if (count == nidxs) { // must have: state >= 0
+    *subsettedType = SUBSETTED_DEFAULT;
+    return idxs;
+  }
 
-  if (state > 0) {
-    X_C_TYPE *ans = (X_C_TYPE*) R_alloc(count, sizeof(X_C_TYPE));
-    jj = 0;
-    for (ii = 0; ii < nidxs; ++ ii) {
-      // idxs[ii] can be positive or 0
-      if (idxs[ii]) ans[jj ++] = idxs[ii];
+  if (state >= 0) {
+    if (*subsettedType == SUBSETTED_INTEGER) {
+      RETURN_VALIDATED_ANS(int, nidxs, idxs[ii], idxs[ii]);
+      /*
+      int *ans = (int*) R_alloc(count, sizeof(int));
+      jj = 0;
+      for (ii = 0; ii < nidxs; ++ ii) {
+        // idxs[ii] can be positive or 0
+        if (idxs[ii]) ans[jj ++] = idxs[ii];
+      }
+      return ans;
+      */
+
+    } else {
+      RETURN_VALIDATED_ANS(double, nidxs, idxs[ii], idxs[ii]);
+      /*
+      double *ans = (double*) R_alloc(count, sizeof(double));
+      jj = 0;
+      for (ii = 0; ii < nidxs; ++ ii) {
+        // idxs[ii] can be positive or 0
+        if (idxs[ii]) ans[jj ++] = idxs[ii];
+      }
+      return ans;
+      */
     }
-    return ans;
   }
 
   // state < 0
@@ -74,13 +111,35 @@ X_C_TYPE* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t 
   *ansNidxs = count;
   if (count == 0) return NULL;
 
-  X_C_TYPE *ans = (X_C_TYPE*) R_alloc(count, sizeof(int));
-  jj = 0;
-  for (ii = 0; ii < maxIdx; ++ ii) {
-    if (!filter[ii]) ans[jj ++] = ii + 1;
+  R_xlen_t upperBound;
+  for (upperBound = maxIdx-1; upperBound >= 0; -- upperBound) {
+    if (!filter[upperBound]) break;
   }
+  ++ upperBound;
+  if (upperBound > R_INT_MAX) *subsettedType = SUBSETTED_REAL;
 
-  return ans;
+  if (*subsettedType == SUBSETTED_INTEGER) {
+    RETURN_VALIDATED_ANS(int, upperBound, !filter[ii], ii + 1);
+    /*
+    int *ans = (int*) R_alloc(count, sizeof(int));
+    jj = 0;
+    for (ii = 0; ii < upperBound; ++ ii) {
+      if (!filter[ii]) ans[jj ++] = ii + 1;
+    }
+    return ans;
+    */
+
+  } else {
+    RETURN_VALIDATED_ANS(double, upperBound, !filter[ii], ii + 1);
+    /*
+    double *ans = (double*) R_alloc(count, sizeof(double));
+    jj = 0;
+    for (ii = 0; ii < upperBound; ++ ii) {
+      if (!filter[ii]) ans[jj ++] = ii + 1;
+    }
+    return ans;
+    */
+  }
 }
 
 

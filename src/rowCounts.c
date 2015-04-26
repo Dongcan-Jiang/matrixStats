@@ -37,10 +37,9 @@ SEXP rowCounts(SEXP x, SEXP dim, SEXP value, SEXP what, SEXP naRm, SEXP hasNA, S
     error("Argument 'value' must be a numeric value.");
 
   R_xlen_t nrows, ncols;
-  void *crows = validateIndices(rows, nrow, &nrows);
-  void *ccols = validateIndices(cols, ncol, &ncols);
-  int rowsType = modeSubsettedIndex(rows, crows);
-  int colsType = modeSubsettedIndex(cols, ccols);
+  int rowsType, colsType;
+  void *crows = validateIndices(rows, nrow, &nrows, &rowsType);
+  void *ccols = validateIndices(cols, ncol, &ncols, &colsType);
 
   /* Argument 'what': */
   what2 = asInteger(what);
