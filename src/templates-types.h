@@ -173,7 +173,7 @@
 
 #ifdef ROWS_TYPE
   #define NUM_OF_ROWS nrows
-  #define ROW_INDEX(rows, ii) ((R_xlen_t)(rows[ii]-1))
+  #define ROW_INDEX(rows, ii) ((R_xlen_t)rows[ii]-1)
   #if ROWS_TYPE == 'i'
     #define ROWS_C_TYPE int
     #define METHOD_NAME_ROWS CONCAT_MACROS(METHOD_NAME, intRows)
@@ -192,7 +192,7 @@
 
 #ifdef COLS_TYPE
   #define NUM_OF_COLS ncols
-  #define COL_INDEX(cols, jj) ((R_xlen_t)(cols[jj]-1))
+  #define COL_INDEX(cols, jj) ((R_xlen_t)cols[jj]-1)
   #if COLS_TYPE == 'i'
     #define COLS_C_TYPE int
     #define METHOD_NAME_ROWS_COLS CONCAT_MACROS(METHOD_NAME_ROWS, intCols)
