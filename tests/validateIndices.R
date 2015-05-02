@@ -4,17 +4,20 @@ validateIndicesTest <- function(x, idxs, mode, expect) {
   if (!missing(mode))
     storage.mode(idxs) <- mode
 
-  y <- tryCatch(validateIndices(idxs, length(x)), error=function(c) "error")
+  actual <- tryCatch(validateIndices(idxs, length(x)), error=function(c) "error")
   if (missing(expect))
     expect <- tryCatch(x[idxs], error=function(c) "error")
 
-  stopifnot(identical(y, expect))
+  if (!missing(mode) && !identical(actual,"error")) {
+    storage.mode(actual) <- mode
+    storage.mode(expect) <- mode
+  }
+  stopifnot(identical(actual, expect))
 }
 
 X <- 1:5
 
 for (mode in c("integer", "numeric")) {
-  mode <- "integer"
   # mixed positive and negative indices
   validateIndicesTest(X, 1:-1, mode)
   validateIndicesTest(X, -1:1, mode)
@@ -66,9 +69,9 @@ for (mode in c("integer", "numeric")) {
 }
 
 # idxs is NULL
-y <- validateIndices(NULL, length(X))
+acutal <- validateIndices(NULL, length(X))
 expect <- X
-stopifnot(identical(y, expect))
+stopifnot(identical(acutal, expect))
 
 # single TRUE
 validateIndicesTest(X, TRUE)
