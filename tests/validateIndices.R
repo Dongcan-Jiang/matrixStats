@@ -8,11 +8,7 @@ validateIndicesTest <- function(x, idxs, mode, expect) {
   if (missing(expect))
     expect <- tryCatch(x[idxs], error=function(c) "error")
 
-  if (!missing(mode) && !identical(actual,"error")) {
-    storage.mode(actual) <- mode
-    storage.mode(expect) <- mode
-  }
-  stopifnot(identical(actual, expect))
+  stopifnot(all.equal(actual, expect))
 }
 
 X <- 1:5

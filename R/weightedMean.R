@@ -42,7 +42,12 @@
 # @keyword "univar"
 # @keyword "robust"
 #*/############################################################################
-weightedMean <- function(x, w, na.rm=FALSE, refine=FALSE, ...) {
+weightedMean <- function(x, w, idxs=NULL, na.rm=FALSE, refine=FALSE, ...) {
+  if (!is.null(idxs)) {
+    x <- x[idxs]
+    w <- w[idxs]
+  }
+
   # Argument 'refine':
   refine <- as.logical(refine)
 
