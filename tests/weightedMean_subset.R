@@ -12,6 +12,8 @@ validateIndicesTest <- function(x, w, idxs, mode, expect) {
     expect <- tryCatch(weighted.mean(x[idxs],w[idxs]), error=function(c) "error")
   }
 
+  cat(sprintf("idxs=%s\nactual=%s\nexpect=%s\n",
+        toString(idxs), toString(actual), toString(expect)))
   stopifnot(all.equal(actual, expect))
 }
 
