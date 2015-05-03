@@ -35,7 +35,8 @@
 #     If @NULL, all rows are considered.}
 #  \item{cols}{A @vector indicating sub-@matrix's cols.
 #     If @NULL, all cols are considered.}
-#  \item{idxs}{A @vector indicating sub-@vector's indices.}
+#  \item{idxs}{A @vector indicating sub-@vector's elements.
+#     If @NULL, all elements are considered.}
 #  \item{...}{Not used.}
 # }
 #

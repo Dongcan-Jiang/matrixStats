@@ -44,7 +44,8 @@
     If \code{\link[base]{NULL}}, all rows are considered.}
  \item{cols}{A \code{\link[base]{vector}} indicating sub-\code{\link[base]{matrix}}'s cols.
     If \code{\link[base]{NULL}}, all cols are considered.}
- \item{idxs}{A \code{\link[base]{vector}} indicating sub-\code{\link[base]{vector}}'s indices.}
+ \item{idxs}{A \code{\link[base]{vector}} indicating sub-\code{\link[base]{vector}}'s elements.
+    If \code{\link[base]{NULL}}, all elements are considered.}
  \item{...}{Not used.}
 }
 
