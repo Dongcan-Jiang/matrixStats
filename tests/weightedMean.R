@@ -56,3 +56,11 @@ for (mode in c("integer", "double")) {
   str(list(m0=m0, m1=m1))
   stopifnot(identical(m1,m0))
 } # for (mode ...)
+
+
+source("utils/validateIndicesFramework.R")
+x <- runif(5, min=-5, max=5)
+w <- runif(5, min=-5, max=5)
+for (idxs in indexCases) {
+  validateIndicesTestVector_w(x, w, idxs, ftest=weightedMean, fsure=weighted.mean)
+}

@@ -14,8 +14,10 @@ rowMaxs_R <- function(x, ...) {
 
 rowRanges_R <- function(x, ...) {
   suppressWarnings({
-    t(apply(x, MARGIN=1L, FUN=range, ...))
+    ans <- t(apply(x, MARGIN=1L, FUN=range, ...))
   })
+  dim(ans) <- c(dim(x)[1], 2)
+  ans
 } # rowRanges_R()
 
 
@@ -197,3 +199,12 @@ for (na.rm in c(FALSE, TRUE)) {
     stopifnot(all.equal(y1c, y1))
   } # for (name ...)
 } # for (na.rm ...)
+
+
+source("utils/validateIndicesFramework.R")
+x <- matrix(runif(5*5, min=-5, max=5), nrow=5, ncol=5)
+for (rows in indexCases) {
+  for (cols in indexCases) {
+    validateIndicesTestMatrix(x, rows, cols, ftest=rowRanges, fsure=rowRanges_R)
+  }
+}
