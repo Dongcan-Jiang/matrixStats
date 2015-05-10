@@ -33,7 +33,7 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen
   // Single TRUE: select all
   if (nidxs == 1 && idxs[0]) {
     *ansNidxs = maxIdx;
-    *subsettedType = SUBSETTED_ALL;
+    *subsettedType = idxs[0] == NA_INTEGER ? SUBSETTED_NA : SUBSETTED_ALL;
     return NULL;
   }
 

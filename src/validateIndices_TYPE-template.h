@@ -24,6 +24,13 @@
 
 /** idxs must not be NULL, which should be checked before calling this function. **/
 void* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs, int *subsettedType) {
+  // Single NA
+  if (nidxs == 1 && X_ISNAN(idxs[0])) {
+    *ansNidxs = maxIdx;
+    *subsettedType = SUBSETTED_NA;
+    return NULL;
+  }
+
   // For a un-full positive legal idxs array, we should use SUBSETTED_INTEGER as default.
   *subsettedType = SUBSETTED_INTEGER;
 
