@@ -12,6 +12,10 @@
 #define BOOL unsigned char
 #endif
 
+#ifndef IS_INF
+#define IS_INF(x) (x == R_PosInf || x == R_NegInf)
+#endif
+
 #ifndef SUBSETTED_MODE_INDEX
 #define SUBSETTED_MODE_INDEX
 
@@ -39,11 +43,10 @@
   #endif
 #endif
 
-#include <limits.h>
 #ifdef LONG_VECTOR_SUPPORT
   #define NA_R_XLEN_T -4503599627370497
 #else
-  #define NA_R_XLEN_T INT_MIN
+  #define NA_R_XLEN_T NA_INTEGER
 #endif
 
 /* Macro to check for user interrupts every 2^20 iteration */

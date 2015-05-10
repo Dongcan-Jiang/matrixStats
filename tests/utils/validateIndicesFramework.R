@@ -43,10 +43,8 @@ validateIndicesTestMatrix <- function(x, rows, cols, ftest, fsure, ...) {
 indexCases <- list()
 # mixed positive and negative indices
 indexCases[[length(indexCases)+1]] <- 1:-1
-indexCases[[length(indexCases)+1]] <- -1:1
 
-# midex positive, negative and zero indices
-indexCases[[length(indexCases)+1]] <- c(1, 0, 0, -6)
+# mixed positive, negative and zero indices
 indexCases[[length(indexCases)+1]] <- c(-4, 0, 0, 1)
 
 # negative indices with duplicates
@@ -78,6 +76,10 @@ indexCases[[length(indexCases)+1]] <- integer()
 # NA in idxs
 indexCases[[length(indexCases)+1]] <- c(NA, -2)
 indexCases[[length(indexCases)+1]] <- c(NA, 0, 2)
+
+# Inf in idxs
+indexCases[[length(indexCases)+1]] <- c(-Inf, -1)
+indexCases[[length(indexCases)+1]] <- c(NA, 0, 2, Inf)
 
 # single Logical
 indexCases[[length(indexCases)+1]] <- NA
