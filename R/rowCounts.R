@@ -88,9 +88,9 @@ rowCounts <- function(x, value=TRUE, na.rm=FALSE, dim.=dim(x), rows=NULL, cols=N
   } else {
     if (is.vector(x)) dim(x) <- dim.
 
-    if (!is.null(rows) && !is.null(cols)) x <- x[rows,cols]
-    else if (!is.null(rows)) x <- x[rows,]
-    else if (!is.null(cols)) x <- x[,cols]
+    if (!is.null(rows) && !is.null(cols)) x <- x[rows,cols,drop=FALSE]
+    else if (!is.null(rows)) x <- x[rows,,drop=FALSE]
+    else if (!is.null(cols)) x <- x[,cols,drop=FALSE]
 
     if (is.na(value)) {
       counts <- apply(x, MARGIN=1L, FUN=function(x) sum(is.na(x)))
@@ -133,9 +133,9 @@ colCounts <- function(x, value=TRUE, na.rm=FALSE, dim.=dim(x), rows=NULL, cols=N
   } else {
     if (is.vector(x)) dim(x) <- dim.
 
-    if (!is.null(rows) && !is.null(cols)) x <- x[rows,cols]
-    else if (!is.null(rows)) x <- x[rows,]
-    else if (!is.null(cols)) x <- x[,cols]
+    if (!is.null(rows) && !is.null(cols)) x <- x[rows,cols,drop=FALSE]
+    else if (!is.null(rows)) x <- x[rows,,drop=FALSE]
+    else if (!is.null(cols)) x <- x[,cols,drop=FALSE]
 
     if (is.na(value)) {
       counts <- apply(x, MARGIN=2L, FUN=function(x) sum(is.na(x)))

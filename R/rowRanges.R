@@ -55,13 +55,9 @@
 # @keyword univar
 #*/###########################################################################
 rowRanges <- function(x, rows=NULL, cols=NULL, na.rm=FALSE, dim.=dim(x), ...) {
-  if (!is.null(rows) && !is.null(cols)) {
-    x <- x[rows, cols]
-  } else if (!is.null(rows)) {
-    x <- x[rows,]
-  } else if (!is.null(cols)) {
-    x <- x[,cols]
-  }
+  if (!is.null(rows) && !is.null(cols)) x <- x[rows,cols,drop=FALSE]
+  else if (!is.null(rows)) x <- x[rows,,drop=FALSE]
+  else if (!is.null(cols)) x <- x[,cols,drop=FALSE]
 
   dim. <- as.integer(dim.)
   na.rm <- as.logical(na.rm)

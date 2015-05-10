@@ -17,57 +17,21 @@ for (mode in c("integer", "double")) {
   x <- matrix(runif(20*5, min=-3, max=3), nrow=20, ncol=5)
   x[sample.int(length(x), size=7)] <- 0
   storage.mode(x) <- mode
-  tx <- t(x)
-
-  y <- matrix(0, nrow=dim(x)[1]*2, ncol=dim(x)[2]*2)
-  rows <- sample.int(dim(y)[1], size=dim(x)[1])
-  cols <- sample.int(dim(y)[2], size=dim(x)[2])
-  y[rows,cols] <- x
-  storage.mode(y) <- mode
-  yr <- y[rows,]
-  yc <- y[,cols]
-  ty <- t(y)
-  tyr <- t(yr)
-  tyc <- t(yc)
 
   for (na.rm in c(FALSE, TRUE)) {
     # Count zeros
     r0 <- rowCounts_R(x, value=0, na.rm=na.rm)
     r1 <- rowCounts(x, value=0, na.rm=na.rm)
-    r2 <- colCounts(tx, value=0, na.rm=na.rm)
-    r1a <- rowCounts(y, value=0, na.rm=na.rm, rows=rows, cols=cols)
-    r1r <- rowCounts(yr, value=0, na.rm=na.rm, cols=cols)
-    r1c <- rowCounts(yc, value=0, na.rm=na.rm, rows=rows)
-    r2a <- colCounts(ty, value=0, na.rm=na.rm, rows=cols, cols=rows)
-    r2r <- colCounts(tyr, value=0, na.rm=na.rm, rows=cols)
-    r2c <- colCounts(tyc, value=0, na.rm=na.rm, cols=rows)
+    r2 <- colCounts(t(x), value=0, na.rm=na.rm)
     stopifnot(identical(r1, r0))
     stopifnot(identical(r2, r0))
-    stopifnot(identical(r1a, r0))
-    stopifnot(identical(r1r, r0))
-    stopifnot(identical(r1c, r0))
-    stopifnot(identical(r2a, r0))
-    stopifnot(identical(r2r, r0))
-    stopifnot(identical(r2c, r0))
 
     # Count NAs
     r0 <- rowCounts_R(x, value=NA, na.rm=na.rm)
     r1 <- rowCounts(x, value=NA, na.rm=na.rm)
-    r2 <- colCounts(tx, value=NA, na.rm=na.rm)
-    r1a <- rowCounts(y, value=NA, na.rm=na.rm, rows=rows, cols=cols)
-    r1r <- rowCounts(yr, value=NA, na.rm=na.rm, cols=cols)
-    r1c <- rowCounts(yc, value=NA, na.rm=na.rm, rows=rows)
-    r2a <- colCounts(ty, value=NA, na.rm=na.rm, rows=cols, cols=rows)
-    r2r <- colCounts(tyr, value=NA, na.rm=na.rm, rows=cols)
-    r2c <- colCounts(tyc, value=NA, na.rm=na.rm, cols=rows)
+    r2 <- colCounts(t(x), value=NA, na.rm=na.rm)
     stopifnot(identical(r1, r0))
     stopifnot(identical(r2, r0))
-    stopifnot(identical(r1a, r0))
-    stopifnot(identical(r1r, r0))
-    stopifnot(identical(r1c, r0))
-    stopifnot(identical(r2a, r0))
-    stopifnot(identical(r2r, r0))
-    stopifnot(identical(r2c, r0))
 
     if (mode == "integer") {
       ux <- unique(as.vector(x))
@@ -75,21 +39,9 @@ for (mode in c("integer", "double")) {
       for (value in ux) {
         r0 <- r0 + rowCounts_R(x, value=value, na.rm=na.rm)
         r1 <- r1 + rowCounts(x, value=value, na.rm=na.rm)
-        r2 <- r2 + colCounts(tx, value=value, na.rm=na.rm)
-        r1a <- r1a + rowCounts(y, value=value, na.rm=na.rm, rows=rows, cols=cols)
-        r1r <- r1r + rowCounts(yr, value=value, na.rm=na.rm, cols=cols)
-        r1c <- r1c + rowCounts(yc, value=value, na.rm=na.rm, rows=rows)
-        r2a <- r2a + colCounts(ty, value=value, na.rm=na.rm, rows=cols, cols=rows)
-        r2r <- r2r + colCounts(tyr, value=value, na.rm=na.rm, rows=cols)
-        r2c <- r2c + colCounts(tyc, value=value, na.rm=na.rm, cols=rows)
+        r2 <- r2 + colCounts(t(x), value=value, na.rm=na.rm)
         stopifnot(identical(r1, r0))
         stopifnot(identical(r2, r0))
-        stopifnot(identical(r1a, r0))
-        stopifnot(identical(r1r, r0))
-        stopifnot(identical(r1c, r0))
-        stopifnot(identical(r2a, r0))
-        stopifnot(identical(r2r, r0))
-        stopifnot(identical(r2c, r0))
       }
       stopifnot(all(r0 == ncol(x)))
     } # if (mode == "integer")
@@ -100,57 +52,20 @@ for (mode in c("integer", "double")) {
 naList <- list(NA_integer_, NA_real_, NaN)
 for (naValue in naList) {
   x <- matrix(naValue, nrow=20, ncol=5)
-  tx <- t(x)
-
-  y <- matrix(naValue, nrow=dim(x)[1]*2, ncol=dim(x)[2]*2)
-  rows <- sample.int(dim(y)[1], size=dim(x)[1])
-  cols <- sample.int(dim(y)[2], size=dim(x)[2])
-  y[rows,cols] <- x
-  storage.mode(y) <- storage.mode(x)
-  yr <- y[rows,]
-  yc <- y[,cols]
-  ty <- t(y)
-  tyr <- t(yr)
-  tyc <- t(yc)
-
   for (na.rm in c(FALSE, TRUE)) {
     r0 <- rowCounts_R(x, na.rm=na.rm)
     r1 <- rowCounts(x, na.rm=na.rm)
-    r2 <- colCounts(tx, na.rm=na.rm)
-    r1a <- rowCounts(y, na.rm=na.rm, rows=rows, cols=cols)
-    r1r <- rowCounts(yr, na.rm=na.rm, cols=cols)
-    r1c <- rowCounts(yc, na.rm=na.rm, rows=rows)
-    r2a <- colCounts(ty, na.rm=na.rm, rows=cols, cols=rows)
-    r2r <- colCounts(tyr, na.rm=na.rm, rows=cols)
-    r2c <- colCounts(tyc, na.rm=na.rm, cols=rows)
+    r2 <- colCounts(t(x), na.rm=na.rm)
     stopifnot(identical(r1, r0))
     stopifnot(identical(r2, r0))
-    stopifnot(identical(r1a, r0))
-    stopifnot(identical(r1r, r0))
-    stopifnot(identical(r1c, r0))
-    stopifnot(identical(r2a, r0))
-    stopifnot(identical(r2r, r0))
-    stopifnot(identical(r2c, r0))
 
     # Count NAs
     r0 <- rowCounts_R(x, value=NA, na.rm=na.rm)
     r1 <- rowCounts(x, value=NA, na.rm=na.rm)
-    r2 <- colCounts(tx, value=NA, na.rm=na.rm)
-    r1a <- rowCounts(y, value=NA, na.rm=na.rm, rows=rows, cols=cols)
-    r1r <- rowCounts(yr, value=NA, na.rm=na.rm, cols=cols)
-    r1c <- rowCounts(yc, value=NA, na.rm=na.rm, rows=rows)
-    r2a <- colCounts(ty, value=NA, na.rm=na.rm, rows=cols, cols=rows)
-    r2r <- colCounts(tyr, value=NA, na.rm=na.rm, rows=cols)
-    r2c <- colCounts(tyc, value=NA, na.rm=na.rm, cols=rows)
+    r2 <- colCounts(t(x), value=NA, na.rm=na.rm)
     stopifnot(all(r0 == ncol(x)))
     stopifnot(identical(r1, r0))
     stopifnot(identical(r2, r0))
-    stopifnot(identical(r1a, r0))
-    stopifnot(identical(r1r, r0))
-    stopifnot(identical(r1c, r0))
-    stopifnot(identical(r2a, r0))
-    stopifnot(identical(r2r, r0))
-    stopifnot(identical(r2c, r0))
   }
 } # for (naValue ...)
 
@@ -164,38 +79,14 @@ x[2:4,] <- TRUE
 x[,1] <- TRUE
 x[5,] <- FALSE
 x[,5] <- FALSE
-tx <- t(x)
-
-y <- matrix(naValue, nrow=dim(x)[1]*2, ncol=dim(x)[2]*2)
-rows <- sample.int(dim(y)[1], size=dim(x)[1])
-cols <- sample.int(dim(y)[2], size=dim(x)[2])
-y[rows,cols] <- x
-storage.mode(y) <- storage.mode(x)
-yr <- y[rows,]
-yc <- y[,cols]
-ty <- t(y)
-tyr <- t(yr)
-tyc <- t(yc)
 
 # Row/column counts
 for (na.rm in c(FALSE, TRUE)) {
   r0 <- rowCounts_R(x, na.rm=na.rm)
   r1 <- rowCounts(x, na.rm=na.rm)
-  r2 <- colCounts(tx, na.rm=na.rm)
-  r1a <- rowCounts(y, na.rm=na.rm, rows=rows, cols=cols)
-  r1r <- rowCounts(yr, na.rm=na.rm, cols=cols)
-  r1c <- rowCounts(yc, na.rm=na.rm, rows=rows)
-  r2a <- colCounts(ty, na.rm=na.rm, rows=cols, cols=rows)
-  r2r <- colCounts(tyr, na.rm=na.rm, rows=cols)
-  r2c <- colCounts(tyc, na.rm=na.rm, cols=rows)
+  r2 <- colCounts(t(x), na.rm=na.rm)
   stopifnot(identical(r1, r0))
   stopifnot(identical(r2, r0))
-  stopifnot(identical(r1a, r0))
-  stopifnot(identical(r1r, r0))
-  stopifnot(identical(r1c, r0))
-  stopifnot(identical(r2a, r0))
-  stopifnot(identical(r2r, r0))
-  stopifnot(identical(r2c, r0))
 
   rT <- rowCounts(x, value=TRUE, na.rm=na.rm)
   rF <- rowCounts(x, value=FALSE, na.rm=na.rm)
@@ -208,21 +99,9 @@ for (na.rm in c(FALSE, TRUE)) {
   # Count NAs
   r0 <- rowCounts_R(x, value=NA, na.rm=na.rm)
   r1 <- rowCounts(x, value=NA, na.rm=na.rm)
-  r2 <- colCounts(tx, value=NA, na.rm=na.rm)
-  r1a <- rowCounts(y, value=NA, na.rm=na.rm, rows=rows, cols=cols)
-  r1r <- rowCounts(yr, value=NA, na.rm=na.rm, cols=cols)
-  r1c <- rowCounts(yc, value=NA, na.rm=na.rm, rows=rows)
-  r2a <- colCounts(ty, value=NA, na.rm=na.rm, rows=cols, cols=rows)
-  r2r <- colCounts(tyr, value=NA, na.rm=na.rm, rows=cols)
-  r2c <- colCounts(tyc, value=NA, na.rm=na.rm, cols=rows)
+  r2 <- colCounts(t(x), value=NA, na.rm=na.rm)
   stopifnot(identical(r1, r0))
   stopifnot(identical(r2, r0))
-  stopifnot(identical(r1a, r0))
-  stopifnot(identical(r1r, r0))
-  stopifnot(identical(r1c, r0))
-  stopifnot(identical(r2a, r0))
-  stopifnot(identical(r2r, r0))
-  stopifnot(identical(r2c, r0))
 }
 
 
@@ -231,45 +110,50 @@ for (na.rm in c(FALSE, TRUE)) {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 x <- matrix(rep(letters, length.out=20*5), nrow=20, ncol=5)
 x[2:3,3:4] <- NA_character_
-tx <- t(x)
-
-y <- matrix("g", nrow=dim(x)[1]*2, ncol=dim(x)[2]*2)
-y[1:dim(x)[1],1:dim(x)[2]] <- NA_character_
-rows <- sample.int(dim(y)[1], size=dim(x)[1])
-cols <- sample.int(dim(y)[2], size=dim(x)[2])
-y[rows,cols] <- x
-storage.mode(y) <- storage.mode(x)
-yr <- y[rows,]
-yc <- y[,cols]
-ty <- t(y)
-tyr <- t(yr)
-tyc <- t(yc)
 
 # Row/column counts
 for (na.rm in c(FALSE, TRUE)) {
   for (value in c("g", NA_character_)) {
     r0 <- rowCounts_R(x, value=value, na.rm=na.rm)
     r1 <- rowCounts(x, value=value, na.rm=na.rm)
-    r2 <- colCounts(tx, value=value, na.rm=na.rm)
-    r1a <- rowCounts(y, value=value, na.rm=na.rm, rows=rows, cols=cols)
-    r1r <- rowCounts(yr, value=value, na.rm=na.rm, cols=cols)
-    r1c <- rowCounts(yc, value=value, na.rm=na.rm, rows=rows)
-    r2a <- colCounts(ty, value=value, na.rm=na.rm, rows=cols, cols=rows)
-    r2r <- colCounts(tyr, value=value, na.rm=na.rm, rows=cols)
-    r2c <- colCounts(tyc, value=value, na.rm=na.rm, cols=rows)
+    r2 <- colCounts(t(x), value=value, na.rm=na.rm)
     stopifnot(identical(r1, r0))
     stopifnot(identical(r2, r0))
-    stopifnot(identical(r1a, r0))
-    stopifnot(identical(r1r, r0))
-    stopifnot(identical(r1c, r0))
-    stopifnot(identical(r2a, r0))
-    stopifnot(identical(r2r, r0))
-    stopifnot(identical(r2c, r0))
 
     c <- count(x[1,], value=value, na.rm=na.rm)
     stopifnot(identical(c,r1[1]))
 
     c <- count(x[2,], value=value, na.rm=na.rm)
     stopifnot(identical(c,r1[2]))
+  }
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Subsetted tests
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+source("utils/validateIndicesFramework.R")
+x <- matrix(runif(6*6, min=-6, max=6), nrow=6, ncol=6)
+storage.mode(x) <- "integer"
+for (value in c(0, NA_integer_)) {
+  for (rows in indexCases) {
+    for (cols in indexCases) {
+      validateIndicesTestMatrix(x, rows, cols, ftest=rowCounts, fsure=rowCounts_R, value=value)
+      validateIndicesTestMatrix(x, rows, cols, ftest=function(x, rows, cols, value) {
+        colCounts(t(x),rows=cols,cols=rows,value=value)
+      }, fsure=rowCounts_R, value=value)
+    }
+  }
+}
+
+x <- matrix(rep(letters, length.out=6*6), nrow=6, ncol=6)
+for (value in c("g", NA_character_)) {
+  for (rows in indexCases) {
+    for (cols in indexCases) {
+      validateIndicesTestMatrix(x, rows, cols, ftest=rowCounts, fsure=rowCounts_R, value=value)
+      validateIndicesTestMatrix(x, rows, cols, ftest=function(x, rows, cols, value) {
+        colCounts(t(x),rows=cols,cols=rows,value=value)
+      }, fsure=rowCounts_R, value=value)
+    }
   }
 }
