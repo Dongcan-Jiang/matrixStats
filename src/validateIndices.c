@@ -16,6 +16,12 @@ for (ii = 0; ii < n; ++ ii) {                     \
 }                                                 \
 return ans
 
+#define FILL_VALIDATED_ANS(n, cond, item) \
+jj = 0;                                   \
+for (ii = 0; ii < n; ++ ii) {             \
+  if (cond) ans[jj ++] = item;            \
+}
+
 
 #define X_TYPE 'i'
 #define SUBSETTED_DEFAULT SUBSETTED_INTEGER
@@ -38,29 +44,71 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen
   }
 
   R_xlen_t ii, jj;
-  R_xlen_t count = 0;
-  R_xlen_t n = nidxs;
-  if (n > maxIdx) n = maxIdx; // n = min(nidxs, maxIdx)
+  R_xlen_t count1 = 0, count2 = 0;
 
   // set default type as SUBSETTED_INTEGER
   *subsettedType = SUBSETTED_INTEGER;
 
-  // count how many idx items
+  if (nidxs >= maxIdx) {
+    // count how many idx items
+    for (ii = 0; ii < maxIdx; ++ ii) {
+      if (idxs[ii]) { // TRUE or NA
+        ++ count1;
+        if (ii + 1 > R_INT_MAX) *subsettedType = SUBSETTED_REAL;
+      }
+    }
+    for (; ii < nidxs; ++ ii) {
+      if (idxs[ii]) { // TRUE or NA
+        ++ count2;
+      }
+    }
+
+    if (*subsettedType == SUBSETTED_INTEGER) {
+      int *ans = (int*) R_alloc(count1+count2, sizeof(int));
+      FILL_VALIDATED_ANS(maxIdx, idxs[ii], IntegerFromLogical(idxs[ii]));
+      for (ii = count1; ii < count1+count2; ++ ii) {
+        ans[ii] = NA_INTEGER;
+      }
+      return ans;
+    }
+    double *ans = (double*) R_alloc(count1+count2, sizeof(double));
+    FILL_VALIDATED_ANS(maxIdx, idxs[ii], RealFromLogical(idxs[ii]));
+    for (ii = count1; ii < count1+count2; ++ ii) {
+      ans[ii] = NA_REAL;
+    }
+    return ans;
+  }
+  // nidxs < maxIdx
+  R_xlen_t n = maxIdx % nidxs;
   for (ii = 0; ii < n; ++ ii) {
-    if (idxs[ii]) {
-      ++ count;
+    if (idxs[ii]) { // TRUE or NA
+      ++ count1;
       if (ii + 1 > R_INT_MAX) *subsettedType = SUBSETTED_REAL;
     }
   }
-  *ansNidxs = count;
-
-  // fill TURE idxs into ans
-  if (*subsettedType == SUBSETTED_INTEGER) {
-    // NOTE: braces is needed here, because of macro-defined function
-    RETURN_VALIDATED_ANS(int, n, idxs[ii], ii + 1);
+  for (; ii < nidxs; ++ ii) {
+    if (idxs[ii]) { // TRUE or NA
+      ++ count2;
+      if (ii + 1 > R_INT_MAX) *subsettedType = SUBSETTED_REAL;
+    }
   }
-  // *subsettedType == SUBSETTED_REAL
-  RETURN_VALIDATED_ANS(double, n, idxs[ii], ii + 1);
+  R_xlen_t count = maxIdx / nidxs * (count1 + count2) + count1;
+  if (*subsettedType == SUBSETTED_INTEGER) {
+    int *ans = (int*) R_alloc(count, sizeof(int));
+    FILL_VALIDATED_ANS(nidxs, idxs[ii], IntegerFromLogical(idxs[ii]));
+    for (ii = nidxs; ii+nidxs < maxIdx; ++ ii) {
+      memcpy(idxs+ii, idxs, nidxs*sizeof(int));
+    }
+    memcpy(idxs+ii, idxs, (maxIdx-ii)*sizeof(int));
+    return ans;
+  }
+  double *ans = (double*) R_alloc(count, sizeof(double));
+  FILL_VALIDATED_ANS(nidxs, idxs[ii], RealFromLogical(idxs[ii]));
+  for (ii = nidxs; ii+nidxs < maxIdx; ++ ii) {
+    memcpy(idxs+ii, idxs, nidxs*sizeof(double));
+  }
+  memcpy(idxs+ii, idxs, (maxIdx-ii)*sizeof(double));
+  return ans;
 }
 
 

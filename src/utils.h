@@ -123,5 +123,15 @@ static R_INLINE double RealFromInteger(int x) {
   return x;
 }
 
+static R_INLINE int IntegerFromLogical(int x) {
+  if (x == NA_LOGICAL) return NA_INTEGER;
+  return x;
+}
+
+static R_INLINE double RealFromLogical(int x) {
+  if (x == NA_LOGICAL) return NA_REAL;
+  return x;
+}
+
 #define R_INDEX_OP(a, OP, b) (a == NA_R_XLEN_T || b == NA_R_XLEN_T ? NA_R_XLEN_T : a OP b)
 #define R_GET(x, i, NA) (i == NA_R_XLEN_T ? NA : x[i])
