@@ -3,7 +3,7 @@ library("matrixStats")
 validateIndicesTestVector <- function(x, idxs, ftest, fsure, expect, ...) {
   actual <- tryCatch(ftest(x,idxs,...), error=function(c) "error")
   if (missing(expect)) {
-    if (is.null(idxs)) idxs <- 1:length(idxs)
+    if (is.null(idxs)) idxs <- 1:length(x)
     expect <- tryCatch(fsure(x[idxs],...), error=function(c) "error")
   }
   cat(sprintf("idxs=%s\n", toString(idxs)))
@@ -15,7 +15,7 @@ validateIndicesTestVector <- function(x, idxs, ftest, fsure, expect, ...) {
 validateIndicesTestVector_w <- function(x, w, idxs, ftest, fsure, expect, ...) {
   actual <- tryCatch(ftest(x,w,idxs,...), error=function(c) "error")
   if (missing(expect)) {
-    if (is.null(idxs)) idxs <- 1:length(idxs)
+    if (is.null(idxs)) idxs <- 1:length(x)
     expect <- tryCatch(fsure(x[idxs],w[idxs],...), error=function(c) "error")
   }
   cat(sprintf("idxs=%s\n", toString(idxs)))
@@ -27,8 +27,8 @@ validateIndicesTestVector_w <- function(x, w, idxs, ftest, fsure, expect, ...) {
 validateIndicesTestMatrix <- function(x, rows, cols, ftest, fsure, expect, ...) {
   actual <- tryCatch(ftest(x,rows,cols,...), error=function(c) "error")
   if (missing(expect)) {
-    if (is.null(rows)) rows <- 1:length(rows)
-    if (is.null(cols)) cols <- 1:length(cols)
+    if (is.null(rows)) rows <- 1:length(dim(x)[1])
+    if (is.null(cols)) cols <- 1:length(dim(x)[2])
     expect <- tryCatch(fsure(x[rows,cols],...), error=function(c) "error")
   }
   cat(sprintf("rows=%s; cols=%s\n", toString(rows), toString(cols)))
@@ -90,6 +90,8 @@ indexCases[[length(indexCases)+1]] <- c(FALSE, TRUE, FALSE, TRUE, TRUE, TRUE, FA
 
 # insufficient idxs
 indexCases[[length(indexCases)+1]] <- c(FALSE, TRUE)
+indexCases[[length(indexCases)+1]] <- c(FALSE, TRUE, NA)
+indexCases[[length(indexCases)+1]] <- c(FALSE, TRUE, NA, FALSE)
 
-# NULL
+# NULL TODO
 indexCases[[length(indexCases)+1]] <- NULL

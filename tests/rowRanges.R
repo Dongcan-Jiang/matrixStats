@@ -202,7 +202,7 @@ for (na.rm in c(FALSE, TRUE)) {
 
 
 source("utils/validateIndicesFramework.R")
-x <- matrix(runif(5*5, min=-5, max=5), nrow=5, ncol=5)
+x <- matrix(runif(6*6, min=-6, max=6), nrow=6, ncol=6)
 for (rows in indexCases) {
   for (cols in indexCases) {
     validateIndicesTestMatrix(x, rows, cols, ftest=rowRanges, fsure=rowRanges_R)

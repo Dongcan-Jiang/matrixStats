@@ -19,6 +19,11 @@
 \arguments{
   \item{idxs}{A \code{\link[base]{integer}} \code{\link[base]{vector}}. If \code{\link[base]{NULL}}, all indices are considered.}
   \item{maxIdx}{The possible max index.}
+  \item{allowOutOfBound}{Allow positive out of bound to indicate \code{\link[base]{NA}}.}
+}
+
+\usage{
+  validateIndices(idxs=NULL, maxIdx, allowOutOfBound=TRUE)
 }
 
 \value{

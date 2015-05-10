@@ -10,6 +10,11 @@
 # \arguments{
 #   \item{idxs}{A @integer @vector. If @NULL, all indices are considered.}
 #   \item{maxIdx}{The possible max index.}
+#   \item{allowOutOfBound}{Allow positive out of bound to indicate @NA.}
+# }
+#
+# \usage{
+#   @usage validateIndices
 # }
 #
 # \value{
@@ -19,7 +24,7 @@
 # @examples "../incl/validateIndices.Rex"
 #*/############################################################################
 validateIndices <- function(idxs=NULL, maxIdx, allowOutOfBound=TRUE) {
-  y <- .Call('validate', idxs, maxIdx, allowOutOfBound, PACKAGE='matrixStats')
-  if (is.null(y)) y <- 1:maxIdx
-  y
+  ans <- .Call('validate', idxs, maxIdx, allowOutOfBound, PACKAGE='matrixStats')
+  if (is.null(ans)) ans <- 1:maxIdx
+  ans
 }

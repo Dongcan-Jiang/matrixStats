@@ -1,6 +1,6 @@
 /***************************************************************************
  Public methods:
- SEXP validate(SEXP idxs, SEXP maxIdx)
+ SEXP validate(SEXP idxs, SEXP maxIdx, SEXP allowOutOfBound)
 
  **************************************************************************/
 #include <string.h>
@@ -40,8 +40,6 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, int al
   R_xlen_t ii, jj, kk;
   R_xlen_t count1 = 0, count2 = 0;
 
-//  fprintf(stderr, "maxIdx=%d\n", (int) maxIdx);
-//  fprintf(stderr, "nidxs=%d\n", (int) nidxs);
   // set default type as SUBSETTED_INTEGER
   *subsettedType = SUBSETTED_INTEGER;
   if (nidxs == 0) {
@@ -50,8 +48,9 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, int al
   }
 
   if (nidxs > maxIdx) {
-    if (!allowOutOfBound)
+    if (!allowOutOfBound) {
       error("logical subscript too long");
+    }
 
     // count how many idx items
     for (ii = 0; ii < maxIdx; ++ ii) {
@@ -98,6 +97,7 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, int al
   if (lastIndex > 0 && maxIdx - lastPartNum + lastIndex > R_INT_MAX)
     *subsettedType = SUBSETTED_REAL;
 
+  lastIndex = 0;
   for (; ii < nidxs; ++ ii) {
     if (idxs[ii]) { // TRUE or NA
       if (idxs[ii] == NA_LOGICAL) ++ naCount;
@@ -106,11 +106,9 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, int al
     }
   }
   R_xlen_t count = count1 + count2;
-  if (lastIndex > 0 && lastPartNum < nidxs && maxIdx - lastPartNum - count + lastIndex > R_INT_MAX)
+  if (lastIndex > 0 && maxIdx - lastPartNum - count + lastIndex > R_INT_MAX)
     *subsettedType = SUBSETTED_REAL;
 
-//  fprintf(stderr, "count1=%d, count2=%d, count=%d, naCount=%d\n",
-//      (int) count1, (int) count2, (int) count, (int) naCount);
 
   if (naCount == 0 && count == nidxs) { // All True
     *ansNidxs = maxIdx;
@@ -122,10 +120,8 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, int al
   if (*subsettedType == SUBSETTED_INTEGER) {
     int *ans = (int*) R_alloc(*ansNidxs, sizeof(int));
 
-//    fprintf(stderr, "ansNidxs=%d\n", (int) *ansNidxs);
-//    fprintf(stderr, "lastPartNum=%d\n", (int) lastPartNum);
-
     FILL_VALIDATED_ANS(nidxs, idxs[ii], idxs[ii] == NA_LOGICAL ? NA_INTEGER : ii + 1);
+    if (lastPartNum == maxIdx) return ans;
 
     for (ii = count, kk = nidxs; kk+nidxs <= maxIdx-lastPartNum; kk += nidxs, ii += count) {
       for (jj = 0; jj < count; ++ jj) {
@@ -140,6 +136,7 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, int al
   // *subsettedType == SUBSETTED_REAL
   double *ans = (double*) R_alloc(*ansNidxs, sizeof(double));
   FILL_VALIDATED_ANS(nidxs, idxs[ii], idxs[ii] == NA_LOGICAL ? NA_REAL : ii + 1);
+  if (lastPartNum == maxIdx) return ans;
 
   for (ii = count, kk = nidxs; kk+nidxs <= maxIdx-lastPartNum; kk += nidxs, ii += count) {
     for (jj = 0; jj < count; ++ jj) {
@@ -158,6 +155,7 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, int al
   * If `idxs` is NULL, NULL will be returned, which indicates selecting.
   * the whole to-be-computed vector(matrix).
   * `maxIdx` is the to-be-computed vector(matrix)'s length (rows/cols).
+  * `allowOutOfBound` indicates whether to allow positve out of bound indexing.
   * `ansNidxs` is used for returning the new idxs array's length.
   * `subsettedType` is used for returning the new idxs array's datatype.
   ************************************************************/
@@ -187,36 +185,36 @@ void *validateIndices(SEXP idxs, R_xlen_t maxIdx, int allowOutOfBound, R_xlen_t 
   * If `idxs` is NULL, NULL will be returned, which indicates selecting.
   * the whole to-be-computed vector(matrix).
   * `maxIdx` is the to-be-computed vector(matrix)'s length (rows/cols).
+  * `allowOutOfBound` indicates whether to allow positve out of bound indexing.
   ************************************************************/
 SEXP validate(SEXP idxs, SEXP maxIdx, SEXP allowOutOfBound) {
-//  fprintf(stderr, "test error");
   SEXP ans;
   R_xlen_t ansNidxs;
   int subsettedType;
   R_xlen_t cmaxIdx = asR_xlen_t(maxIdx, 0);
   R_xlen_t nidxs = xlength(idxs);
-  int allowOutOfBound = asLogicalNoNA(allowOutOfBound, "allowOutOfBound")
-//  fprintf(stderr, "cmaxIdx=%d, nidxs=%d\n", (int) cmaxIdx, (int) nidxs);
+  int callowOutOfBound = asLogicalNoNA(allowOutOfBound, "allowOutOfBound");
   void *cidxs;
 
   int mode = TYPEOF(idxs);
   switch (mode) {
     case INTSXP:
-      cidxs = validateIndices_Integer(INTEGER(idxs), nidxs, cmaxIdx, allowOutOfBound, &ansNidxs, &subsettedType);
+      cidxs = validateIndices_Integer(INTEGER(idxs), nidxs, cmaxIdx, callowOutOfBound, &ansNidxs, &subsettedType);
       break;
     case REALSXP:
-      cidxs = validateIndices_Real(REAL(idxs), nidxs, cmaxIdx, allowOutOfBound, &ansNidxs, &subsettedType);
+      cidxs = validateIndices_Real(REAL(idxs), nidxs, cmaxIdx, callowOutOfBound, &ansNidxs, &subsettedType);
       break;
     case LGLSXP:
-      cidxs = validateIndices_Logical(LOGICAL(idxs), nidxs, cmaxIdx, allowOutOfBound, &ansNidxs, &subsettedType);
+      cidxs = validateIndices_Logical(LOGICAL(idxs), nidxs, cmaxIdx, callowOutOfBound, &ansNidxs, &subsettedType);
       break;
     case NILSXP:
       return R_NilValue;
     default:
       error("idxs can only be integer, numeric, or logical.");
   }
-  if (subsettedType == SUBSETTED_ALL)
+  if (subsettedType == SUBSETTED_ALL) {
     return R_NilValue;
+  }
 
   if (subsettedType == SUBSETTED_INTEGER) {
     ans = PROTECT(allocVector(INTSXP, ansNidxs));

@@ -59,8 +59,8 @@ for (mode in c("integer", "double")) {
 
 
 source("utils/validateIndicesFramework.R")
-x <- runif(5, min=-5, max=5)
-w <- runif(5, min=-5, max=5)
+x <- runif(6, min=-6, max=6)
+w <- runif(6, min=-6, max=6)
 for (idxs in indexCases) {
   validateIndicesTestVector_w(x, w, idxs, ftest=weightedMean, fsure=weighted.mean)
 }
