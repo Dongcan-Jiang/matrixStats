@@ -30,8 +30,12 @@ RETURN_TYPE METHOD_NAME_ROWS_COLS(ARGUMENTS_LIST) {
   int count;
   X_C_TYPE xvalue;
 
+#ifdef ROWS_TYPE
   ROWS_C_TYPE *crows = (ROWS_C_TYPE*) rows;
+#endif
+#ifdef COLS_TYPE
   COLS_C_TYPE *ccols = (COLS_C_TYPE*) cols;
+#endif
 
   if (what == 0L) {  /* all */
     /* Count missing values? [sic!] */
