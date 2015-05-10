@@ -114,7 +114,7 @@ void *validateIndices(SEXP idxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs, int *type)
 
 static R_INLINE int IntegerFromReal(double x) {
   if (ISNAN(x)) return NA_INTEGER;
-  if (x > INT_MAX || x <= INT_MAX) return NA_INTEGER;
+  if (x > INT_MAX || x <= INT_MIN) return NA_INTEGER;
   return x;
 }
 

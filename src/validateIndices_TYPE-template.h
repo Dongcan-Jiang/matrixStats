@@ -31,6 +31,7 @@ void* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ans
   R_xlen_t ii, jj;
   int state = 0;
   R_xlen_t count = 0;
+  BOOL outOfBound = 0;
 
   // figure out whether idxs are all positive or all negative.
   for (ii = 0; ii < nidxs; ++ ii) {
@@ -38,9 +39,12 @@ void* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ans
     if (idx > 0 || X_ISNAN(idx)) {
       if (!X_ISNAN(idx)) {
         if (state < 0) error("only 0's may be mixed with negative subscripts");
-        if (idx > maxIdx) error("subscript out of bounds");
+        if (idx > maxIdx) {
+          outOfBound = 1;
+//          error("subscript out of bounds");
+        }
 #if X_TYPE == 'r'
-        if (idx > R_XLEN_T_MAX) Rf_error("%d exceeds R_XLEN_T_MAX", idx);
+//        else if (idx > R_XLEN_T_MAX) Rf_error("%d exceeds R_XLEN_T_MAX", idx);
         if (idx > R_INT_MAX) *subsettedType = SUBSETTED_REAL;
 #endif
       }// else error("NA index is not supported"); // NOTE: currently
@@ -54,7 +58,7 @@ void* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ans
   }
 
   if (state >= 0) *ansNidxs = count;
-  if (count == nidxs) { // must have: state >= 0
+  if (count == nidxs && !outOfBound) { // must have: state >= 0
     *subsettedType = SUBSETTED_DEFAULT;
     return idxs;
   }
@@ -64,16 +68,16 @@ void* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ans
     if (*subsettedType == SUBSETTED_INTEGER) {
       // NOTE: braces is needed here, because of macro-defined function
 #if X_TYPE == 'i'
-      RETURN_VALIDATED_ANS(int, nidxs, idxs[ii], idxs[ii],);
-#else // Y_TYPE == 'r'
-      RETURN_VALIDATED_ANS(int, nidxs, idxs[ii], IntegerFromReal(idxs[ii]),);
+      RETURN_VALIDATED_ANS(int, nidxs, idxs[ii], idxs[ii] > maxIdx ? NA_INTEGER : idxs[ii],);
+#else // X_TYPE == 'r'
+      RETURN_VALIDATED_ANS(int, nidxs, idxs[ii], idxs[ii] > maxIdx ? NA_INTEGER : IntegerFromReal(idxs[ii]),);
 #endif
     }
     // *subsettedType == SUBSETTED_REAL
 #if X_TYPE == 'i'
-    RETURN_VALIDATED_ANS(double, nidxs, idxs[ii], RealFromInteger(idxs[ii]),);
-#else // Y_TYPE == 'r'
-    RETURN_VALIDATED_ANS(double, nidxs, idxs[ii], idxs[ii],);
+    RETURN_VALIDATED_ANS(double, nidxs, idxs[ii], idxs[ii] > maxIdx ? NA_REAL : RealFromInteger(idxs[ii]),);
+#else // X_TYPE == 'r'
+    RETURN_VALIDATED_ANS(double, nidxs, idxs[ii], idxs[ii] > maxIdx ? NA_REAL : idxs[ii],);
 #endif
   }
 

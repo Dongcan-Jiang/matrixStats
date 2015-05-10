@@ -1,9 +1,21 @@
 library("matrixStats")
 
+validateIndicesTestVector <- function(x, idxs, ftest, fsure, expect, ...) {
+  actual <- tryCatch(ftest(x,idxs,...), error=function(c) "error")
+  if (missing(expect)) {
+    if (is.null(idxs)) idxs <- 1:length(idxs)
+    expect <- tryCatch(fsure(x[idxs],...), error=function(c) "error")
+  }
+  cat(sprintf("idxs=%s\n", toString(idxs)))
+  cat(sprintf("actual=%s\nexpect=%s\n", toString(actual), toString(expect)))
+
+  stopifnot(all.equal(actual, expect))
+}
 
 validateIndicesTestVector_w <- function(x, w, idxs, ftest, fsure, expect, ...) {
   actual <- tryCatch(ftest(x,w,idxs,...), error=function(c) "error")
   if (missing(expect)) {
+    if (is.null(idxs)) idxs <- 1:length(idxs)
     expect <- tryCatch(fsure(x[idxs],w[idxs],...), error=function(c) "error")
   }
   cat(sprintf("idxs=%s\n", toString(idxs)))
@@ -15,6 +27,8 @@ validateIndicesTestVector_w <- function(x, w, idxs, ftest, fsure, expect, ...) {
 validateIndicesTestMatrix <- function(x, rows, cols, ftest, fsure, expect, ...) {
   actual <- tryCatch(ftest(x,rows,cols,...), error=function(c) "error")
   if (missing(expect)) {
+    if (is.null(rows)) rows <- 1:length(rows)
+    if (is.null(cols)) cols <- 1:length(cols)
     expect <- tryCatch(fsure(x[rows,cols],...), error=function(c) "error")
   }
   cat(sprintf("rows=%s; cols=%s\n", toString(rows), toString(cols)))
@@ -40,16 +54,16 @@ indexCases[[length(indexCases)+1]] <- c(-4, 0, 0, -3, -1, -3, -1)
 indexCases[[length(indexCases)+1]] <- c(3, 5, 1)
 
 # positive indices with duplicates
-indexCases[[length(indexCases)+1]] <- c(3, 5, 1, 5, 5)
+indexCases[[length(indexCases)+1]] <- c(3, 0, 0, 5, 1, 5, 5)
 
 # positive indices out of ranges
 indexCases[[length(indexCases)+1]] <- 4:9
 
 # negative out of ranges: just ignore
-indexCases[[length(indexCases)+1]] <- c(-5, 0, -3, -1)
+indexCases[[length(indexCases)+1]] <- c(-5, 0, -3, -1, -9)
 
 # negative indices exclude all
-indexCases[[length(indexCases)+1]] <- -1:-5
+indexCases[[length(indexCases)+1]] <- -1:-6
 
 # idxs is single number
 indexCases[[length(indexCases)+1]] <- 4
@@ -57,24 +71,25 @@ indexCases[[length(indexCases)+1]] <- -4
 indexCases[[length(indexCases)+1]] <- 0
 
 # idxs is empty
-indexCases[[length(indexCases)+1]] <- c()
+indexCases[[length(indexCases)+1]] <- integer()
 
 # NA in idxs
 indexCases[[length(indexCases)+1]] <- c(NA, -2)
 indexCases[[length(indexCases)+1]] <- c(NA, 0, 2)
 
-# idxs is single NA
+# single Logical
 indexCases[[length(indexCases)+1]] <- NA
-
-# single TRUE
 indexCases[[length(indexCases)+1]] <- TRUE
 indexCases[[length(indexCases)+1]] <- FALSE
 
 # full logical idxs
-indexCases[[length(indexCases)+1]] <- c(FALSE, TRUE, FALSE, TRUE, TRUE)
+indexCases[[length(indexCases)+1]] <- c(FALSE, TRUE, FALSE, TRUE, TRUE, FALSE)
 
 # too many logical idxs
-indexCases[[length(indexCases)+1]] <- c(FALSE, TRUE, FALSE, TRUE, TRUE, TRUE, FALSE)
+indexCases[[length(indexCases)+1]] <- c(FALSE, TRUE, FALSE, TRUE, TRUE, TRUE, FALSE, TRUE)
 
 # insufficient idxs
-indexCases[[length(indexCases)+1]] <- c(FALSE, TRUE, TRUE)
+indexCases[[length(indexCases)+1]] <- c(FALSE, TRUE)
+
+# NULL
+indexCases[[length(indexCases)+1]] <- NULL

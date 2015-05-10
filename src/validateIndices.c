@@ -44,6 +44,10 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen
 //  fprintf(stderr, "nidxs=%d\n", (int) nidxs);
   // set default type as SUBSETTED_INTEGER
   *subsettedType = SUBSETTED_INTEGER;
+  if (nidxs == 0) {
+    *ansNidxs = 0;
+    return NULL;
+  }
 
   if (nidxs > maxIdx) {
     // count how many idx items
@@ -122,11 +126,11 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen
 
     for (ii = count, kk = nidxs; kk+nidxs <= maxIdx-lastPartNum; kk += nidxs, ii += count) {
       for (jj = 0; jj < count; ++ jj) {
-        ans[ii+jj] = ans[jj] + kk;
+        ans[ii+jj] = ans[jj] == NA_INTEGER ? NA_INTEGER : ans[jj] + kk;
       }
     }
     for (jj = 0; jj < count1; ++ jj) {
-      ans[ii+jj] = ans[jj] + kk;
+      ans[ii+jj] = ans[jj] == NA_INTEGER ? NA_INTEGER : ans[jj] + kk;
     }
     return ans;
   }
@@ -136,11 +140,11 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen
 
   for (ii = count, kk = nidxs; kk+nidxs <= maxIdx-lastPartNum; kk += nidxs, ii += count) {
     for (jj = 0; jj < count; ++ jj) {
-      ans[ii+jj] = ans[jj] + kk;
+      ans[ii+jj] = ISNAN(ans[jj]) ? NA_REAL : ans[jj] + kk;
     }
   }
   for (jj = 0; jj < count1; ++ jj) {
-    ans[ii+jj] = ans[jj] + kk;
+    ans[ii+jj] = ISNAN(ans[jj]) ? NA_REAL : ans[jj] + kk;
   }
   return ans;
 }
