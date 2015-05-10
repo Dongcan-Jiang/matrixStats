@@ -86,7 +86,6 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, int al
   R_xlen_t naCount = 0;
   R_xlen_t lastIndex = 0;
   R_xlen_t lastPartNum = maxIdx % nidxs;
-  if (lastPartNum == 0) lastPartNum = nidxs;
   for (ii = 0; ii < lastPartNum; ++ ii) {
     if (idxs[ii]) { // TRUE or NA
       if (idxs[ii] == NA_LOGICAL) ++ naCount;
@@ -116,14 +115,12 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, int al
     return NULL;
   }
 
-  *ansNidxs = (maxIdx - lastPartNum) / nidxs * count + count1;
+  *ansNidxs = maxIdx / nidxs * count + count1;
   if (*subsettedType == SUBSETTED_INTEGER) {
     int *ans = (int*) R_alloc(*ansNidxs, sizeof(int));
-
     FILL_VALIDATED_ANS(nidxs, idxs[ii], idxs[ii] == NA_LOGICAL ? NA_INTEGER : ii + 1);
-    if (lastPartNum == maxIdx) return ans;
 
-    for (ii = count, kk = nidxs; kk+nidxs <= maxIdx-lastPartNum; kk += nidxs, ii += count) {
+    for (ii = count, kk = nidxs; kk+nidxs <= maxIdx; kk += nidxs, ii += count) {
       for (jj = 0; jj < count; ++ jj) {
         ans[ii+jj] = ans[jj] == NA_INTEGER ? NA_INTEGER : ans[jj] + kk;
       }
@@ -136,9 +133,8 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, int al
   // *subsettedType == SUBSETTED_REAL
   double *ans = (double*) R_alloc(*ansNidxs, sizeof(double));
   FILL_VALIDATED_ANS(nidxs, idxs[ii], idxs[ii] == NA_LOGICAL ? NA_REAL : ii + 1);
-  if (lastPartNum == maxIdx) return ans;
 
-  for (ii = count, kk = nidxs; kk+nidxs <= maxIdx-lastPartNum; kk += nidxs, ii += count) {
+  for (ii = count, kk = nidxs; kk+nidxs <= maxIdx; kk += nidxs, ii += count) {
     for (jj = 0; jj < count; ++ jj) {
       ans[ii+jj] = ISNAN(ans[jj]) ? NA_REAL : ans[jj] + kk;
     }
