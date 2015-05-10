@@ -14,6 +14,7 @@
   - X_TYPE: 'i', 'r', or 'l'
 
  ***********************************************************************/ 
+#include <Rdefines.h>
 #include "types.h"
 
 /* Expand arguments:
@@ -24,13 +25,6 @@
 
 /** idxs must not be NULL, which should be checked before calling this function. **/
 void* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs, int *subsettedType) {
-  // Single NA
-  if (nidxs == 1 && X_ISNAN(idxs[0])) {
-    *ansNidxs = maxIdx;
-    *subsettedType = SUBSETTED_NA;
-    return NULL;
-  }
-
   // For a un-full positive legal idxs array, we should use SUBSETTED_INTEGER as default.
   *subsettedType = SUBSETTED_INTEGER;
 
@@ -70,22 +64,22 @@ void* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ans
     if (*subsettedType == SUBSETTED_INTEGER) {
       // NOTE: braces is needed here, because of macro-defined function
 #if X_TYPE == 'i'
-      RETURN_VALIDATED_ANS(int, nidxs, idxs[ii], idxs[ii]);
+      RETURN_VALIDATED_ANS(int, nidxs, idxs[ii], idxs[ii],);
 #else // Y_TYPE == 'r'
-      RETURN_VALIDATED_ANS(int, nidxs, idxs[ii], IntegerFromReal(idxs[ii]));
+      RETURN_VALIDATED_ANS(int, nidxs, idxs[ii], IntegerFromReal(idxs[ii]),);
 #endif
     }
     // *subsettedType == SUBSETTED_REAL
 #if X_TYPE == 'i'
-    RETURN_VALIDATED_ANS(double, nidxs, idxs[ii], RealFromInteger(idxs[ii]));
+    RETURN_VALIDATED_ANS(double, nidxs, idxs[ii], RealFromInteger(idxs[ii]),);
 #else // Y_TYPE == 'r'
-    RETURN_VALIDATED_ANS(double, nidxs, idxs[ii], idxs[ii]);
+    RETURN_VALIDATED_ANS(double, nidxs, idxs[ii], idxs[ii],);
 #endif
   }
 
   // state < 0
   // use filter as bitset to find out all required idxs
-  BOOL filter[maxIdx];
+  BOOL *filter = Calloc(maxIdx, BOOL);
   count = maxIdx;
   memset(filter, 0, sizeof(filter));
   for (ii = 0; ii < nidxs; ++ ii) {
@@ -112,10 +106,10 @@ void* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ans
   // fill required idxs into ans
   if (*subsettedType == SUBSETTED_INTEGER) {
     // NOTE: braces is needed here, because of macro-defined function
-    RETURN_VALIDATED_ANS(int, upperBound, !filter[ii], ii + 1);
+    RETURN_VALIDATED_ANS(int, upperBound, !filter[ii], ii + 1, Free(filter););
   } 
   // *subsettedType == SUBSETTED_REAL
-  RETURN_VALIDATED_ANS(double, upperBound, !filter[ii], ii + 1);
+  RETURN_VALIDATED_ANS(double, upperBound, !filter[ii], ii + 1, Free(filter););
 }
 
 
