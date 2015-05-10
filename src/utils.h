@@ -111,3 +111,17 @@ static R_INLINE R_xlen_t asR_xlen_t(SEXP x, R_xlen_t i) {
 
 void *validateIndices(SEXP idxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs, int *type);
 
+
+static R_INLINE int IntegerFromReal(double x) {
+  if (ISNAN(x)) return NA_INTEGER;
+  if (x > INT_MAX || x <= INT_MAX) return NA_INTEGER;
+  return x;
+}
+
+static R_INLINE double RealFromInteger(int x) {
+  if (x == NA_INTEGER) return NA_REAL;
+  return x;
+}
+
+#define R_INDEX_OP(a, OP, b) (a == NA_R_XLEN_T || b == NA_R_XLEN_T ? NA_R_XLEN_T : a OP b)
+#define R_GET(x, i, NA) (i == NA_R_XLEN_T ? NA : x[i])

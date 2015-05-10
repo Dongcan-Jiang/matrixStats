@@ -18,6 +18,7 @@
 #define SUBSETTED_ALL 0
 #define SUBSETTED_INTEGER 1
 #define SUBSETTED_REAL 2
+#define SUBSETTED_NA
 
 #endif
 
@@ -38,6 +39,12 @@
   #endif
 #endif
 
+#include <limits.h>
+#ifdef LONG_VECTOR_SUPPORT
+  #define NA_R_XLEN_T -4503599627370497
+#else
+  #define NA_R_XLEN_T INT_MIN
+#endif
 
 /* Macro to check for user interrupts every 2^20 iteration */
 #define R_CHECK_USER_INTERRUPT(i) if (i % 1048576 == 0) R_CheckUserInterrupt()

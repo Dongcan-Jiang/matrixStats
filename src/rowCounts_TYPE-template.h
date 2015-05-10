@@ -26,7 +26,7 @@
 
 RETURN_TYPE METHOD_NAME_ROWS_COLS(ARGUMENTS_LIST) {
   R_xlen_t ii, jj;
-  R_xlen_t colBegin;
+  R_xlen_t colBegin, idx;
   int count;
   X_C_TYPE xvalue;
 
@@ -39,11 +39,12 @@ RETURN_TYPE METHOD_NAME_ROWS_COLS(ARGUMENTS_LIST) {
     /* Count missing values? [sic!] */
     if (X_ISNAN(value)) {
       for (jj=0; jj < NUM_OF_COLS; jj++) {
-        colBegin = COL_INDEX(ccols,jj) * nrow;
+        colBegin = R_INDEX_OP(COL_INDEX(ccols,jj), *, nrow);
         for (ii=0; ii < NUM_OF_ROWS; ii++) {
           /* Skip? */
           if (ans[ii]) {
-            xvalue = x[colBegin+ROW_INDEX(crows,ii)];
+            idx = R_INDEX_OP(colBegin, +, ROW_INDEX(crows,ii));
+            xvalue = R_GET(x, idx, X_NA);
             if (!X_ISNAN(xvalue)) {
               ans[ii] = 0;
               /* Found another value! Skip from now on */
@@ -53,11 +54,12 @@ RETURN_TYPE METHOD_NAME_ROWS_COLS(ARGUMENTS_LIST) {
       }
     } else {
       for (jj=0; jj < NUM_OF_COLS; jj++) {
-        colBegin = COL_INDEX(ccols,jj) * nrow;
+        colBegin = R_INDEX_OP(COL_INDEX(ccols,jj), *, nrow);
         for (ii=0; ii < NUM_OF_ROWS; ii++) {
           /* Skip? */
           if (ans[ii]) {
-            xvalue = x[colBegin+ROW_INDEX(crows,ii)];
+            idx = R_INDEX_OP(colBegin, +, ROW_INDEX(crows,ii));
+            xvalue = R_GET(x, idx, X_NA);
             if (xvalue == value) {
             } else if (narm && X_ISNAN(xvalue)) {
               /* Skip */
@@ -82,11 +84,12 @@ RETURN_TYPE METHOD_NAME_ROWS_COLS(ARGUMENTS_LIST) {
     /* Count missing values? [sic!] */
     if (X_ISNAN(value)) {
       for (jj=0; jj < NUM_OF_COLS; jj++) {
-        colBegin = COL_INDEX(ccols,jj) * nrow;
+        colBegin = R_INDEX_OP(COL_INDEX(ccols,jj), *, nrow);
         for (ii=0; ii < NUM_OF_ROWS; ii++) {
           /* Skip? */
           if (!ans[ii]) {
-            xvalue = x[colBegin+ROW_INDEX(crows,ii)];
+            idx = R_INDEX_OP(colBegin, +, ROW_INDEX(crows,ii));
+            xvalue = R_GET(x, idx, X_NA);
             if (X_ISNAN(xvalue)) {
               ans[ii] = 1;
               /* Found value! Skip from now on */
@@ -96,11 +99,12 @@ RETURN_TYPE METHOD_NAME_ROWS_COLS(ARGUMENTS_LIST) {
       }
     } else {
       for (jj=0; jj < NUM_OF_COLS; jj++) {
-        colBegin = COL_INDEX(ccols,jj) * nrow;
+        colBegin = R_INDEX_OP(COL_INDEX(ccols,jj), *, nrow);
         for (ii=0; ii < NUM_OF_ROWS; ii++) {
           /* Skip? */
           if (!ans[ii]) {
-            xvalue = x[colBegin+ROW_INDEX(crows,ii)];
+            idx = R_INDEX_OP(colBegin, +, ROW_INDEX(crows,ii));
+            xvalue = R_GET(x, idx, X_NA);
             if (xvalue == value) {
               /* Found value! Skip from now on */
               ans[ii] = 1;
@@ -124,21 +128,23 @@ RETURN_TYPE METHOD_NAME_ROWS_COLS(ARGUMENTS_LIST) {
     /* Count missing values? [sic!] */
     if (X_ISNAN(value)) {
       for (jj=0; jj < NUM_OF_COLS; jj++) {
-        colBegin = COL_INDEX(ccols,jj) * nrow;
+        colBegin = R_INDEX_OP(COL_INDEX(ccols,jj), *, nrow);
         for (ii=0; ii < NUM_OF_ROWS; ii++) {
-          xvalue = x[colBegin+ROW_INDEX(crows,ii)];
+          idx = R_INDEX_OP(colBegin, +, ROW_INDEX(crows,ii));
+          xvalue = R_GET(x, idx, X_NA);
           if (X_ISNAN(xvalue)) ans[ii] = ans[ii] + 1;
         }
       }
     } else {
       for (jj=0; jj < NUM_OF_COLS; jj++) {
-        colBegin = COL_INDEX(ccols,jj) * nrow;
+        colBegin = R_INDEX_OP(COL_INDEX(ccols,jj), *, nrow);
         for (ii=0; ii < NUM_OF_ROWS; ii++) {
           count = ans[ii];
           /* Nothing more to do on this row? */
           if (count == NA_INTEGER) continue;
   
-          xvalue = x[colBegin+ROW_INDEX(crows,ii)];
+          idx = R_INDEX_OP(colBegin, +, ROW_INDEX(crows,ii));
+          xvalue = R_GET(x, idx, X_NA);
           if (xvalue == value) {
             ans[ii] = count + 1;
           } else {
