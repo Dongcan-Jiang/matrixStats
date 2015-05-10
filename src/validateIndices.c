@@ -40,6 +40,8 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen
   R_xlen_t ii, jj, kk;
   R_xlen_t count1 = 0, count2 = 0;
 
+//  fprintf(stderr, "maxIdx=%d\n", (int) maxIdx);
+//  fprintf(stderr, "nidxs=%d\n", (int) nidxs);
   // set default type as SUBSETTED_INTEGER
   *subsettedType = SUBSETTED_INTEGER;
 
@@ -100,6 +102,8 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen
   if (lastIndex > 0 && lastPartNum < nidxs && maxIdx - lastPartNum - count + lastIndex > R_INT_MAX)
     *subsettedType = SUBSETTED_REAL;
 
+//  fprintf(stderr, "count1=%d, count2=%d, count=%d, naCount=%d\n",
+//      (int) count1, (int) count2, (int) count, (int) naCount);
 
   if (naCount == 0 && count == nidxs) { // All True
     *ansNidxs = maxIdx;
@@ -107,12 +111,16 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen
     return NULL;
   }
 
-  *ansNidxs = maxIdx / nidxs * count + count1;
+  *ansNidxs = (maxIdx - lastPartNum) / nidxs * count + count1;
   if (*subsettedType == SUBSETTED_INTEGER) {
     int *ans = (int*) R_alloc(*ansNidxs, sizeof(int));
+
+//    fprintf(stderr, "ansNidxs=%d\n", (int) *ansNidxs);
+//    fprintf(stderr, "lastPartNum=%d\n", (int) lastPartNum);
+
     FILL_VALIDATED_ANS(nidxs, idxs[ii], idxs[ii] == NA_LOGICAL ? NA_INTEGER : ii + 1);
 
-    for (ii = count, kk = 0; kk+nidxs <= maxIdx; kk += nidxs, ii += count) {
+    for (ii = count, kk = nidxs; kk+nidxs <= maxIdx-lastPartNum; kk += nidxs, ii += count) {
       for (jj = 0; jj < count; ++ jj) {
         ans[ii+jj] = ans[jj] + kk;
       }
@@ -126,7 +134,7 @@ void* validateIndices_Logical(int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen
   double *ans = (double*) R_alloc(*ansNidxs, sizeof(double));
   FILL_VALIDATED_ANS(nidxs, idxs[ii], idxs[ii] == NA_LOGICAL ? NA_REAL : ii + 1);
 
-  for (ii = count, kk = 0; kk+nidxs <= maxIdx; kk += nidxs, ii += count) {
+  for (ii = count, kk = nidxs; kk+nidxs <= maxIdx-lastPartNum; kk += nidxs, ii += count) {
     for (jj = 0; jj < count; ++ jj) {
       ans[ii+jj] = ans[jj] + kk;
     }
@@ -174,11 +182,13 @@ void *validateIndices(SEXP idxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs, int *subse
   * `maxIdx` is the to-be-computed vector(matrix)'s length (rows/cols).
   ************************************************************/
 SEXP validate(SEXP idxs, SEXP maxIdx) {
+//  fprintf(stderr, "test error");
   SEXP ans;
   R_xlen_t ansNidxs;
   int subsettedType;
   R_xlen_t cmaxIdx = asR_xlen_t(maxIdx, 0);
   R_xlen_t nidxs = xlength(idxs);
+//  fprintf(stderr, "cmaxIdx=%d, nidxs=%d\n", (int) cmaxIdx, (int) nidxs);
   void *cidxs;
 
   int mode = TYPEOF(idxs);
@@ -191,12 +201,14 @@ SEXP validate(SEXP idxs, SEXP maxIdx) {
       break;
     case LGLSXP:
       cidxs = validateIndices_Logical(LOGICAL(idxs), nidxs, cmaxIdx, &ansNidxs, &subsettedType);
-      if (subsettedType != SUBSETTED_ALL) break;
+      break;
     case NILSXP:
       return R_NilValue;
     default:
       error("idxs can only be integer, numeric, or logical.");
   }
+  if (subsettedType == SUBSETTED_ALL)
+    return R_NilValue;
 
   if (subsettedType == SUBSETTED_INTEGER) {
     ans = PROTECT(allocVector(INTSXP, ansNidxs));

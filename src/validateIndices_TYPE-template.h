@@ -81,7 +81,7 @@ void* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ans
   // use filter as bitset to find out all required idxs
   BOOL *filter = Calloc(maxIdx, BOOL);
   count = maxIdx;
-  memset(filter, 0, sizeof(filter));
+  memset(filter, 0, maxIdx*sizeof(BOOL));
   for (ii = 0; ii < nidxs; ++ ii) {
     R_xlen_t idx = -idxs[ii];
     if (idx > 0 && idx <= maxIdx) {
