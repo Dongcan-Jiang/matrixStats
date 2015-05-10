@@ -18,8 +18,8 @@
 #
 # @examples "../incl/validateIndices.Rex"
 #*/############################################################################
-validateIndices <- function(idxs=NULL, maxIdx) {
-  y <- .Call('validate', idxs, maxIdx, PACKAGE='matrixStats')
+validateIndices <- function(idxs=NULL, maxIdx, allowOutOfBound=TRUE) {
+  y <- .Call('validate', idxs, maxIdx, allowOutOfBound, PACKAGE='matrixStats')
   if (is.null(y)) y <- 1:maxIdx
   y
 }

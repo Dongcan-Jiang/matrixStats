@@ -1,17 +1,17 @@
 /***********************************************************************
  TEMPLATE:
-  void validateIndices_<Integer|Real>[ROWS_TYPE][COLS_TYPE](X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs)
+  void validateIndices_<Integer|Real>[ROWS_TYPE][COLS_TYPE](X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, int allowOutOfBound, R_xlen_t *ansNidxs, int *subsettedType)
 
  GENERATES:
-  void validateIndices_Real[ROWS_TYPE][COLS_TYPE](double *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs)
-  void validateIndices_Integer[ROWS_TYPE][COLS_TYPE](int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs)
+  void validateIndices_Real[ROWS_TYPE][COLS_TYPE](double *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, int allowOutOfBound, R_xlen_t *ansNidxs, int *subsettedType)
+  void validateIndices_Integer[ROWS_TYPE][COLS_TYPE](int *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, int allowOutOfBound, R_xlen_t *ansNidxs, int *subsettedType)
 
  Arguments:
    The following macros ("arguments") should be defined for the 
    template to work as intended.
 
   - METHOD_NAME: the name of the resulting function
-  - X_TYPE: 'i', 'r', or 'l'
+  - X_TYPE: 'i', 'r'
 
  ***********************************************************************/ 
 #include <Rdefines.h>
@@ -24,7 +24,7 @@
 
 
 /** idxs must not be NULL, which should be checked before calling this function. **/
-void* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs, int *subsettedType) {
+void* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, int allowOutOfBound, R_xlen_t *ansNidxs, int *subsettedType) {
   // For a un-full positive legal idxs array, we should use SUBSETTED_INTEGER as default.
   *subsettedType = SUBSETTED_INTEGER;
 
@@ -40,11 +40,10 @@ void* METHOD_NAME(X_C_TYPE *idxs, R_xlen_t nidxs, R_xlen_t maxIdx, R_xlen_t *ans
       if (!X_ISNAN(idx)) {
         if (state < 0) error("only 0's may be mixed with negative subscripts");
         if (idx > maxIdx) {
-          outOfBound = 1;
-//          error("subscript out of bounds");
+          if (allowOutOfBound) outOfBound = 1;
+          else error("subscript out of bounds");
         }
 #if X_TYPE == 'r'
-//        else if (idx > R_XLEN_T_MAX) Rf_error("%d exceeds R_XLEN_T_MAX", idx);
         if (idx > R_INT_MAX) *subsettedType = SUBSETTED_REAL;
 #endif
       }// else error("NA index is not supported"); // NOTE: currently

@@ -38,8 +38,8 @@ SEXP colCounts(SEXP x, SEXP dim, SEXP value, SEXP what, SEXP naRm, SEXP hasNA, S
 
   R_xlen_t nrows, ncols;
   int rowsType, colsType;
-  void *crows = validateIndices(rows, nrow, &nrows, &rowsType);
-  void *ccols = validateIndices(cols, ncol, &ncols, &colsType);
+  void *crows = validateIndices(rows, nrow, 0, &nrows, &rowsType);
+  void *ccols = validateIndices(cols, ncol, 0, &ncols, &colsType);
 
   /* Argument 'what': */
   what2 = asInteger(what);
@@ -86,7 +86,7 @@ SEXP count(SEXP x, SEXP value, SEXP what, SEXP naRm, SEXP hasNA, SEXP idxs) {
   R_xlen_t nrows = 1, ncols;
   int rowsType = SUBSETTED_ALL, colsType;
   void *crows = NULL;
-  void *ccols = validateIndices(idxs, nx, &ncols, &colsType);
+  void *ccols = validateIndices(idxs, nx, 1, &ncols, &colsType);
 
   /* Argument 'what': */
   what2 = asInteger(what);

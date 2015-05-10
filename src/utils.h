@@ -109,7 +109,7 @@ static R_INLINE R_xlen_t asR_xlen_t(SEXP x, R_xlen_t i) {
 }
 
 
-void *validateIndices(SEXP idxs, R_xlen_t maxIdx, R_xlen_t *ansNidxs, int *type);
+void *validateIndices(SEXP idxs, R_xlen_t maxIdx, int allowOutOfBound, R_xlen_t *ansNidxs, int *type);
 
 
 static R_INLINE int IntegerFromReal(double x) {
