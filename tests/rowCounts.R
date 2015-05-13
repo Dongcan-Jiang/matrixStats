@@ -135,9 +135,10 @@ for (na.rm in c(FALSE, TRUE)) {
 source("utils/validateIndicesFramework.R")
 x <- matrix(runif(6*6, min=-3, max=3), nrow=6, ncol=6)
 storage.mode(x) <- "integer"
-for (value in c(0, NA_integer_)) {
-  for (rows in indexCases) {
-    for (cols in indexCases) {
+for (rows in indexCases) {
+  for (cols in indexCases) {
+    validateIndicesTestMatrix(x, rows, cols, ftest=rowCounts, fsure=rowCounts_R, value=0, na.rm=TRUE)
+    for (value in c(0, NA_integer_)) {
       validateIndicesTestMatrix(x, rows, cols, ftest=rowCounts, fsure=rowCounts_R, value=value)
       validateIndicesTestMatrix(x, rows, cols, ftest=function(x, rows, cols, value) {
         colCounts(t(x),rows=cols,cols=rows,value=value)
@@ -147,9 +148,10 @@ for (value in c(0, NA_integer_)) {
 }
 
 x <- matrix(rep(letters, length.out=6*6), nrow=6, ncol=6)
-for (value in c("g", NA_character_)) {
-  for (rows in indexCases) {
-    for (cols in indexCases) {
+for (rows in indexCases) {
+  for (cols in indexCases) {
+    validateIndicesTestMatrix(x, rows, cols, ftest=rowCounts, fsure=rowCounts_R, value="g", na.rm=TRUE)
+    for (value in c("g", NA_character_)) {
       validateIndicesTestMatrix(x, rows, cols, ftest=rowCounts, fsure=rowCounts_R, value=value)
       validateIndicesTestMatrix(x, rows, cols, ftest=function(x, rows, cols, value) {
         colCounts(t(x),rows=cols,cols=rows,value=value)

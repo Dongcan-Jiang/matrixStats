@@ -97,14 +97,8 @@ for (na.rm in c(FALSE, TRUE)) {
 source("utils/validateIndicesFramework.R")
 x <- runif(6, min=-3, max=3)
 storage.mode(x) <- "integer"
-for (value in c(0, NA_integer_)) {
-  for (idxs in indexCases) {
-    validateIndicesTestVector(x, idxs, ftest=count, fsure=count_R, value=value)
-  }
-}
-
-storage.mode(x) <- "logical"
 for (idxs in indexCases) {
-  validateIndicesTestVector(x, idxs, ftest=count, fsure=count_R, value=TRUE, na.rm=FALSE)
-  validateIndicesTestVector(x, idxs, ftest=count, fsure=count_R, value=TRUE, na.rm=TRUE)
+  validateIndicesTestVector(x, idxs, ftest=count, fsure=count_R, value=0, na.rm=TRUE)
+  validateIndicesTestVector(x, idxs, ftest=count, fsure=count_R, value=0, na.rm=FALSE)
+  validateIndicesTestVector(x, idxs, ftest=count, fsure=count_R, value=NA_integer_)
 }
