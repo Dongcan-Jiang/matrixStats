@@ -133,7 +133,7 @@ for (na.rm in c(FALSE, TRUE)) {
 # Subsetted tests
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 source("utils/validateIndicesFramework.R")
-x <- matrix(runif(6*6, min=-6, max=6), nrow=6, ncol=6)
+x <- matrix(runif(6*6, min=-3, max=3), nrow=6, ncol=6)
 storage.mode(x) <- "integer"
 for (value in c(0, NA_integer_)) {
   for (rows in indexCases) {

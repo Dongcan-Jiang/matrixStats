@@ -89,3 +89,22 @@ for (na.rm in c(FALSE, TRUE)) {
   n1 <- count(x, value=NA, na.rm=na.rm)
   stopifnot(identical(n1, n0))
 }
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Subsetted tests
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+source("utils/validateIndicesFramework.R")
+x <- runif(6, min=-3, max=3)
+storage.mode(x) <- "integer"
+for (value in c(0, NA_integer_)) {
+  for (idxs in indexCases) {
+    validateIndicesTestVector(x, idxs, ftest=count, fsure=count_R, value=value)
+  }
+}
+
+storage.mode(x) <- "logical"
+for (idxs in indexCases) {
+  validateIndicesTestVector(x, idxs, ftest=count, fsure=count_R, value=TRUE, na.rm=FALSE)
+  validateIndicesTestVector(x, idxs, ftest=count, fsure=count_R, value=TRUE, na.rm=TRUE)
+}

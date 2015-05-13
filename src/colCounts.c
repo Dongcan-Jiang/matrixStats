@@ -83,10 +83,10 @@ SEXP count(SEXP x, SEXP value, SEXP what, SEXP naRm, SEXP hasNA, SEXP idxs) {
   if (!isNumeric(value))
     error("Argument 'value' must be a numeric value.");
 
-  R_xlen_t nrows = 1, ncols;
-  int rowsType = SUBSETTED_ALL, colsType;
-  void *crows = NULL;
-  void *ccols = validateIndices(idxs, nx, 1, &ncols, &colsType);
+  R_xlen_t nrows, ncols = 1;
+  int rowsType, colsType = SUBSETTED_ALL;
+  void *crows = validateIndices(idxs, nx, 1, &nrows, &rowsType);
+  void *ccols = NULL;
 
   /* Argument 'what': */
   what2 = asInteger(what);
