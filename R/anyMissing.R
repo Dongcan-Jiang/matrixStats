@@ -17,6 +17,12 @@
 #
 # \arguments{
 #  \item{x}{A @vector, a @list, a @matrix, a @data.frame, or @NULL.}
+#  \item{rows}{A @vector indicating sub-@matrix's rows.
+#     If @NULL, all rows are considered.}
+#  \item{cols}{A @vector indicating sub-@matrix's cols.
+#     If @NULL, all cols are considered.}
+#  \item{idxs}{A @vector indicating sub-@vector's elements.
+#     If @NULL, all elements are considered.}
 #  \item{...}{Not used.}
 # }
 #
@@ -45,7 +51,7 @@
 # @keyword iteration
 # @keyword logic
 #*/###########################################################################
-anyMissing <- function(x, ...) {
+anyMissing <- function(x, idxs=NULL, ...) {
   ## All list or a data.frame?
   if (is.list(x)) {
     for (kk in seq(along=x)) {
@@ -59,12 +65,12 @@ anyMissing <- function(x, ...) {
 }
 
 
-colAnyMissings <- function(x, ...) {
-  colAnys(x, value=NA, ...)
+colAnyMissings <- function(x, rows=NULL, cols=NULL, ...) {
+  colAnys(x, rows=rows, cols=cols, value=NA, ...)
 }
 
-rowAnyMissings <- function(x, ...) {
-  rowAnys(x, value=NA, ...)
+rowAnyMissings <- function(x, rows=NULL, cols=NULL, ...) {
+  rowAnys(x, rows=rows, cols=cols, value=NA, ...)
 }
 
 
