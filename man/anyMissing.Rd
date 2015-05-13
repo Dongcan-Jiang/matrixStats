@@ -19,9 +19,9 @@
 }
 
 \usage{
- anyMissing(x, ...)
- colAnyMissings(x, ...)
- rowAnyMissings(x, ...)
+ anyMissing(x, idxs=NULL, ...)
+ colAnyMissings(x, rows=NULL, cols=NULL, ...)
+ rowAnyMissings(x, rows=NULL, cols=NULL, ...)
 }
 
 \arguments{
