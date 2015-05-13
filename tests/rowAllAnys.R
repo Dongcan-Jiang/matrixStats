@@ -1,11 +1,23 @@
 library("matrixStats")
 
 rowAlls_R <- function(x, value=TRUE, na.rm=FALSE, ...) {
-  apply((x == value), MARGIN=1L, FUN=all, na.rm=na.rm)
+  if (is.na(value)) {
+    apply(is.na(x), MARGIN=1L, FUN=all, na.rm=na.rm)
+  } else {
+    y <- x == value
+    dim(y) <- dim(x)
+    apply(y, MARGIN=1L, FUN=all, na.rm=na.rm)
+  }
 }
 
 rowAnys_R <- function(x, value=TRUE, na.rm=FALSE, ...) {
-  apply((x == value), MARGIN=1L, FUN=any, na.rm=na.rm)
+  if (is.na(value)) {
+    apply(is.na(x), MARGIN=1L, FUN=any, na.rm=na.rm)
+  } else {
+    y <- x == value
+    dim(y) <- dim(x)
+    apply(y, MARGIN=1L, FUN=any, na.rm=na.rm)
+  }
 }
 
 rowAnyMissings_R <- function(x, ...) {
@@ -144,16 +156,33 @@ for (na.rm in c(FALSE, TRUE)) {
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# A confusing case
+# Subsetted tests
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-x <- matrix(0, nrow=3, ncol=3)
-x[1,] <- c(NA, NA, 0)
-x[3,] <- c(1, 0, 1)
-print(x)
+source("utils/validateIndicesFramework.R")
+x <- matrix(runif(6*6, min=-3, max=3), nrow=6, ncol=6)
+storage.mode(x) <- "integer"
+x[2:3,] <- NA_integer_
+x[2,1] <- 0
+x[4:5,] <- 0
+x[4,6] <- NA_integer_
 
-r0 <- rowAnys_R(x, value=0)
-print(r0)
-r1 <- rowAnys(x, value=0)
-print(r1)
+for (rows in indexCases) {
+  for (cols in indexCases) {
+    validateIndicesTestMatrix(x, rows, cols, ftest=rowAlls, fsure=rowAlls_R, value=0, na.rm=TRUE, debug=TRUE)
+    validateIndicesTestMatrix(x, rows, cols, ftest=rowAlls, fsure=rowAlls_R, value=0, na.rm=FALSE, debug=TRUE)
+    validateIndicesTestMatrix(x, rows, cols, ftest=rowAlls, fsure=rowAlls_R, value=NA_integer_, debug=TRUE)
+    validateIndicesTestMatrix(x, cols, rows, fcolTest=colAlls, fsure=rowAlls_R, value=0, na.rm=TRUE, debug=TRUE)
+    validateIndicesTestMatrix(x, cols, rows, fcolTest=colAlls, fsure=rowAlls_R, value=0, na.rm=FALSE, debug=TRUE)
+    validateIndicesTestMatrix(x, cols, rows, fcolTest=colAlls, fsure=rowAlls_R, value=NA_integer_, debug=TRUE)
 
-stopifnot(identical(r0, r1))
+    validateIndicesTestMatrix(x, rows, cols, ftest=rowAnys, fsure=rowAnys_R, value=0, na.rm=TRUE, debug=TRUE)
+    validateIndicesTestMatrix(x, rows, cols, ftest=rowAnys, fsure=rowAnys_R, value=0, na.rm=FALSE, debug=TRUE)
+    validateIndicesTestMatrix(x, rows, cols, ftest=rowAnys, fsure=rowAnys_R, value=NA_integer_, debug=TRUE)
+    validateIndicesTestMatrix(x, cols, rows, fcolTest=colAnys, fsure=rowAnys_R, value=0, na.rm=TRUE, debug=TRUE)
+    validateIndicesTestMatrix(x, cols, rows, fcolTest=colAnys, fsure=rowAnys_R, value=0, na.rm=FALSE, debug=TRUE)
+    validateIndicesTestMatrix(x, cols, rows, fcolTest=colAnys, fsure=rowAnys_R, value=NA_integer_, debug=TRUE)
+
+    validateIndicesTestMatrix(x, rows, cols, ftest=rowAnyMissings, fsure=rowAnyMissings_R, debug=TRUE)
+    validateIndicesTestMatrix(x, rows, cols, fcolTest=colAnyMissings, fsure=rowAnyMissings_R, debug=TRUE)
+  }
+}

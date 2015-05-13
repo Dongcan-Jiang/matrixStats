@@ -24,13 +24,18 @@ validateIndicesTestVector_w <- function(x, w, idxs, ftest, fsure, debug=FALSE, .
   stopifnot(all.equal(actual, expect))
 }
 
-validateIndicesTestMatrix <- function(x, rows, cols, ftest, fsure, debug=FALSE, ...) {
+validateIndicesTestMatrix <- function(x, rows, cols, ftest, fcolTest, fsure, debug=FALSE, ...) {
   if (debug) cat(sprintf("rows=%s; type=%s\n", toString(rows), toString(typeof(rows))))
   if (debug) cat(sprintf("cols=%s; type=%s\n", toString(cols), toString(typeof(cols))))
   if (identical(rows, "NULL")) rows <- NULL
   if (identical(cols, "NULL")) cols <- NULL
 
-  actual <- tryCatch(ftest(x,rows=rows,cols=cols,...), error=function(c) "error")
+  if (missing(fcolTest)) {
+    actual <- tryCatch(ftest(x,rows=rows,cols=cols,...), error=function(c) "error")
+  } else {
+    actual <- tryCatch(fcolTest(t(x),rows=cols,cols=rows,...), error=function(c) "error")
+  }
+
   if (is.null(rows)) rows <- 1:dim(x)[1]
   if (is.null(cols)) cols <- 1:dim(x)[2]
   expect <- tryCatch(fsure(x[rows,cols,drop=FALSE],...), error=function(c) "error")

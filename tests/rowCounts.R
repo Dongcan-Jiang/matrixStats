@@ -140,9 +140,7 @@ for (rows in indexCases) {
     validateIndicesTestMatrix(x, rows, cols, ftest=rowCounts, fsure=rowCounts_R, value=0, na.rm=TRUE)
     for (value in c(0, NA_integer_)) {
       validateIndicesTestMatrix(x, rows, cols, ftest=rowCounts, fsure=rowCounts_R, value=value)
-      validateIndicesTestMatrix(x, rows, cols, ftest=function(x, rows, cols, value) {
-        colCounts(t(x),rows=cols,cols=rows,value=value)
-      }, fsure=rowCounts_R, value=value)
+      validateIndicesTestMatrix(x, rows, cols, fcolTest=colCounts, fsure=rowCounts_R, value=value)
     }
   }
 }
@@ -153,9 +151,7 @@ for (rows in indexCases) {
     validateIndicesTestMatrix(x, rows, cols, ftest=rowCounts, fsure=rowCounts_R, value="g", na.rm=TRUE)
     for (value in c("g", NA_character_)) {
       validateIndicesTestMatrix(x, rows, cols, ftest=rowCounts, fsure=rowCounts_R, value=value)
-      validateIndicesTestMatrix(x, rows, cols, ftest=function(x, rows, cols, value) {
-        colCounts(t(x),rows=cols,cols=rows,value=value)
-      }, fsure=rowCounts_R, value=value)
+      validateIndicesTestMatrix(x, rows, cols, fcolTest=colCounts, fsure=rowCounts_R, value=value)
     }
   }
 }
