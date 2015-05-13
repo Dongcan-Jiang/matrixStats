@@ -106,7 +106,7 @@ RETURN_TYPE METHOD_NAME_ROWS_COLS(ARGUMENTS_LIST) {
         colBegin = R_INDEX_OP(COL_INDEX(ccols,jj), *, nrow);
         for (ii=0; ii < NUM_OF_ROWS; ii++) {
           /* Skip? */
-          if (!ans[ii]) {
+          if (ans[ii] == 0 || ans[ii] == NA_INTEGER) {
             idx = R_INDEX_OP(colBegin, +, ROW_INDEX(crows,ii));
             xvalue = R_GET(x, idx, X_NA);
             if (xvalue == value) {
