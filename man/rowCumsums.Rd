@@ -25,8 +25,8 @@
 }
 
 \usage{
- rowCumsums(x, dim.=dim(x), ...)
- colCumsums(x, dim.=dim(x), ...)
+ rowCumsums(x, dim.=dim(x), rows=NULL, cols=NULL, ...)
+ colCumsums(x, dim.=dim(x), rows=NULL, cols=NULL, ...)
  rowCumprods(x, dim.=dim(x), ...)
  colCumprods(x, dim.=dim(x), ...)
  rowCummins(x, dim.=dim(x), ...)
@@ -39,6 +39,10 @@
  \item{x}{A \code{\link[base]{numeric}} NxK \code{\link[base]{matrix}}.}
  \item{dim.}{An \code{\link[base]{integer}} \code{\link[base]{vector}} of length two specifying the
              dimension of \code{x}, also when not a \code{\link[base]{matrix}}.}
+ \item{rows}{A \code{\link[base]{vector}} indicating sub-\code{\link[base]{matrix}}'s rows.
+    If \code{\link[base]{NULL}}, all rows are considered.}
+ \item{cols}{A \code{\link[base]{vector}} indicating sub-\code{\link[base]{matrix}}'s cols.
+    If \code{\link[base]{NULL}}, all cols are considered.}
  \item{...}{Not used.}
 }
 

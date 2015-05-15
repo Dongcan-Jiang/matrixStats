@@ -30,6 +30,10 @@
 #  \item{x}{A @numeric NxK @matrix.}
 #  \item{dim.}{An @integer @vector of length two specifying the
 #              dimension of \code{x}, also when not a @matrix.}
+#  \item{rows}{A @vector indicating sub-@matrix's rows.
+#     If @NULL, all rows are considered.}
+#  \item{cols}{A @vector indicating sub-@matrix's cols.
+#     If @NULL, all cols are considered.}
 #  \item{...}{Not used.}
 # }
 #
@@ -50,14 +54,14 @@
 # @keyword iteration
 # @keyword univar
 #*/###########################################################################
-rowCumsums <- function(x, dim.=dim(x), ...) {
+rowCumsums <- function(x, dim.=dim(x), rows=NULL, cols=NULL, ...) {
   dim <- as.integer(dim.);
-  .Call("rowCumsums", x, dim, TRUE, PACKAGE="matrixStats")
+  .Call("rowCumsums", x, dim, TRUE, rows, cols, PACKAGE="matrixStats")
 }
 
-colCumsums <- function(x, dim.=dim(x), ...) {
+colCumsums <- function(x, dim.=dim(x), rows=NULL, cols=NULL, ...) {
   dim <- as.integer(dim.);
-  .Call("rowCumsums", x, dim, FALSE, PACKAGE="matrixStats")
+  .Call("rowCumsums", x, dim, FALSE, rows, cols, PACKAGE="matrixStats")
 }
 
 

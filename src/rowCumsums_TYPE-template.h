@@ -1,10 +1,6 @@
 /***********************************************************************
  TEMPLATE:
-  void rowCumsums_<Integer|Real>(...)
-
- GENERATES:
-  void rowCumsums_Integer(X_C_TYPE *x, R_xlen_t nrow, R_xlen_t ncol, int byrow, double *ans)
-  void rowCumsums_Real(X_C_TYPE *x, R_xlen_t nrow, R_xlen_t ncol, int byrow, double *ans)
+  void rowCumsums_<Integer|Real>(X_C_TYPE *x, R_xlen_t nrow, R_xlen_t ncol, X_C_TYPE value, int what, int narm, int hasna, int *ans, void *rows, R_xlen_t nrows, void *cols, R_xlen_t ncols)
 
  Arguments:
    The following macros ("arguments") should be defined for the
@@ -28,9 +24,18 @@
 #include "templates-types.h"
 
 
-void METHOD_NAME(X_C_TYPE *x, R_xlen_t nrow, R_xlen_t ncol, int byrow, ANS_C_TYPE *ans) {
-  R_xlen_t ii, jj, kk, kk_prev;
+RETURN_TYPE METHOD_NAME_ROWS_COLS(ARGUMENTS_LIST) {
+  R_xlen_t ii, jj, kk, kk_prev, idx;
+  R_xlen_t colBegin;
+  X_C_TYPE xvalue;
   LDOUBLE value;
+
+#ifdef ROWS_TYPE
+  ROWS_C_TYPE *crows = (ROWS_C_TYPE*) rows;
+#endif
+#ifdef COLS_TYPE
+  COLS_C_TYPE *ccols = (COLS_C_TYPE*) cols;
+#endif
 
 #if ANS_TYPE == 'i'
   double R_INT_MIN_d = (double)R_INT_MIN, 
@@ -41,27 +46,34 @@ void METHOD_NAME(X_C_TYPE *x, R_xlen_t nrow, R_xlen_t ncol, int byrow, ANS_C_TYP
 
   if (byrow) {
 #if ANS_TYPE == 'i'
-    oks = (int *) R_alloc(nrow, sizeof(int));
+    oks = (int *) R_alloc(nrows, sizeof(int));
 #endif
+    if (ncols == 0 || nrows == 0) return;
 
-    for (kk=0; kk < nrow; kk++) {
-      ans[kk] = (ANS_C_TYPE) x[kk];
+    colBegin = R_INDEX_OP(COL_INDEX(ccols,0), *, nrow);
+    for (kk=0; kk < nrows; kk++) {
+      idx = R_INDEX_OP(colBegin, +, ROW_INDEX(crows,kk));
+      xvalue = R_GET(x, idx, X_NA);
+      ans[kk] = (ANS_C_TYPE) xvalue;
 #if ANS_TYPE == 'i'
-      oks[kk] = !X_ISNA(x[kk]);
+      oks[kk] = !X_ISNA(xvalue);
 #endif
     }
 
     kk_prev = 0;
-    for (jj=1; jj < ncol; jj++) {
-      for (ii=0; ii < nrow; ii++) {
+    for (jj=1; jj < ncols; jj++) {
+      colBegin = R_INDEX_OP(COL_INDEX(ccols,jj), *, nrow);
+      for (ii=0; ii < nrows; ii++) {
+        idx = R_INDEX_OP(colBegin, +, ROW_INDEX(crows,ii));
+        xvalue = R_GET(x, idx, X_NA);
 #if ANS_TYPE == 'i'
         if (oks[ii]) {
           /* Missing value? */
-          if (X_ISNA(x[kk])) {
+          if (X_ISNA(xvalue)) {
             oks[ii] = 0;
             ans[kk] = ANS_NA;
           } else {
-            value = (LDOUBLE) ans[kk_prev] + (LDOUBLE) x[kk];
+            value = (LDOUBLE) ans[kk_prev] + (LDOUBLE) xvalue;
             /* Integer overflow? */
             if (value < R_INT_MIN_d || value > R_INT_MAX_d) {
               oks[ii] = 0;
@@ -69,13 +81,13 @@ void METHOD_NAME(X_C_TYPE *x, R_xlen_t nrow, R_xlen_t ncol, int byrow, ANS_C_TYP
               ans[kk] = ANS_NA;
             } else {
               ans[kk] = (ANS_C_TYPE) value;
-	    }
-  	  }
-	} else {
+            }
+          }
+        } else {
           ans[kk] = ANS_NA;
-	}
+        }
 #else
-        ans[kk] = (ANS_C_TYPE) ((LDOUBLE) ans[kk_prev] + (LDOUBLE) x[kk]);
+        ans[kk] = (ANS_C_TYPE) ((LDOUBLE) ans[kk_prev] + (LDOUBLE) xvalue);
 #endif
 
         kk++;        
@@ -86,20 +98,23 @@ void METHOD_NAME(X_C_TYPE *x, R_xlen_t nrow, R_xlen_t ncol, int byrow, ANS_C_TYP
     } /* for (jj ...) */
   } else {
     kk = 0;
-    for (jj=0; jj < ncol; jj++) {
+    for (jj=0; jj < ncols; jj++) {
+      colBegin = R_INDEX_OP(COL_INDEX(ccols,jj), *, nrow);
       value = 0;
 #if ANS_TYPE == 'i'
       ok = 1;
 #endif
-      for (ii=0; ii < nrow; ii++) {
+      for (ii=0; ii < nrows; ii++) {
+        idx = R_INDEX_OP(colBegin, +, ROW_INDEX(crows,ii));
+        xvalue = R_GET(x, idx, X_NA);
 #if ANS_TYPE == 'i'
         if (ok) {
           /* Missing value? */
-          if (X_ISNA(x[kk])) {
+          if (X_ISNA(xvalue)) {
             ok = 0;
             ans[kk] = ANS_NA;
           } else {
-            value += (LDOUBLE) x[kk];
+            value += (LDOUBLE) xvalue;
             /* Integer overflow? */
             if (value < R_INT_MIN_d || value > R_INT_MAX_d) {
               ok = 0;
@@ -107,13 +122,13 @@ void METHOD_NAME(X_C_TYPE *x, R_xlen_t nrow, R_xlen_t ncol, int byrow, ANS_C_TYP
               ans[kk] = ANS_NA;
             } else {
               ans[kk] = (ANS_C_TYPE) value;
-	    }
-  	  }
-	} else {
+            }
+          }
+        } else {
           ans[kk] = ANS_NA;
-	}
+        }
 #else
-        value += x[kk];
+        value += xvalue;
         ans[kk] = (ANS_C_TYPE) value;
 #endif
 
@@ -131,9 +146,6 @@ void METHOD_NAME(X_C_TYPE *x, R_xlen_t nrow, R_xlen_t ncol, int byrow, ANS_C_TYP
   }
 #endif 
 }
-
-/* Undo template macros */
-#include "templates-types_undef.h"
 
 
 /***************************************************************************
