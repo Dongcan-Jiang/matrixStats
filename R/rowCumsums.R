@@ -65,14 +65,14 @@ colCumsums <- function(x, dim.=dim(x), rows=NULL, cols=NULL, ...) {
 }
 
 
-rowCumprods <- function(x, dim.=dim(x), ...) {
+rowCumprods <- function(x, dim.=dim(x), rows=NULL, cols=NULL, ...) {
   dim <- as.integer(dim.);
-  .Call("rowCumprods", x, dim, TRUE, PACKAGE="matrixStats")
+  .Call("rowCumprods", x, dim, TRUE, rows, cols, PACKAGE="matrixStats")
 }
 
-colCumprods <- function(x, dim.=dim(x), ...) {
+colCumprods <- function(x, dim.=dim(x), rows=NULL, cols=NULL, ...) {
   dim <- as.integer(dim.);
-  .Call("rowCumprods", x, dim, FALSE, PACKAGE="matrixStats")
+  .Call("rowCumprods", x, dim, FALSE, rows, cols, PACKAGE="matrixStats")
 }
 
 

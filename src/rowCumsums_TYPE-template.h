@@ -1,6 +1,9 @@
 /***********************************************************************
  TEMPLATE:
-  void rowCumsums_<Integer|Real>(X_C_TYPE *x, R_xlen_t nrow, R_xlen_t ncol, X_C_TYPE value, int what, int narm, int hasna, int *ans, void *rows, R_xlen_t nrows, void *cols, R_xlen_t ncols)
+  void rowCumsums_<Integer|Real>(ARGUMENTS_LIST)
+
+ ARGUMENTS_LIST:
+  X_C_TYPE *x, R_xlen_t nrow, R_xlen_t ncol, int byrow, ANS_C_TYPE *ans, void *rows, R_xlen_t nrows, void *cols, R_xlen_t ncols
 
  Arguments:
    The following macros ("arguments") should be defined for the
@@ -44,11 +47,12 @@ RETURN_TYPE METHOD_NAME_ROWS_COLS(ARGUMENTS_LIST) {
   int warn = 0, ok, *oks = NULL;
 #endif
 
+  if (ncols == 0 || nrows == 0) return;
+
   if (byrow) {
 #if ANS_TYPE == 'i'
     oks = (int *) R_alloc(nrows, sizeof(int));
 #endif
-    if (ncols == 0 || nrows == 0) return;
 
     colBegin = R_INDEX_OP(COL_INDEX(ccols,0), *, nrow);
     for (kk=0; kk < nrows; kk++) {

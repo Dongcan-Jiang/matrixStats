@@ -27,8 +27,8 @@
 \usage{
  rowCumsums(x, dim.=dim(x), rows=NULL, cols=NULL, ...)
  colCumsums(x, dim.=dim(x), rows=NULL, cols=NULL, ...)
- rowCumprods(x, dim.=dim(x), ...)
- colCumprods(x, dim.=dim(x), ...)
+ rowCumprods(x, dim.=dim(x), rows=NULL, cols=NULL, ...)
+ colCumprods(x, dim.=dim(x), rows=NULL, cols=NULL, ...)
  rowCummins(x, dim.=dim(x), ...)
  colCummins(x, dim.=dim(x), ...)
  rowCummaxs(x, dim.=dim(x), ...)
