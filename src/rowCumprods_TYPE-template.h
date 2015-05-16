@@ -60,7 +60,7 @@ RETURN_TYPE METHOD_NAME_ROWS_COLS(ARGUMENTS_LIST) {
       xvalue = R_GET(x, idx, X_NA);
       ans[kk] = (ANS_C_TYPE) xvalue;
 #if ANS_TYPE == 'i'
-      oks[kk] = 1;
+      oks[kk] = !X_ISNA(xvalue);
 #endif
     }
 
@@ -72,14 +72,19 @@ RETURN_TYPE METHOD_NAME_ROWS_COLS(ARGUMENTS_LIST) {
         xvalue = R_GET(x, idx, X_NA);
 #if ANS_TYPE == 'i'
         if (oks[ii]) {
-          value = (LDOUBLE) ans[kk_prev] * (LDOUBLE) xvalue;
-          /* Integer overflow? */
-          if (value < R_INT_MIN_d || value > R_INT_MAX_d) {
+          if (X_ISNA(xvalue)) {
             oks[ii] = 0;
-            warn = 1;
             ans[kk] = ANS_NA;
           } else {
-            ans[kk] = (ANS_C_TYPE) value;
+            value = (LDOUBLE) ans[kk_prev] * (LDOUBLE) xvalue;
+            /* Integer overflow? */
+            if (value < R_INT_MIN_d || value > R_INT_MAX_d) {
+              oks[ii] = 0;
+              warn = 1;
+              ans[kk] = ANS_NA;
+            } else {
+              ans[kk] = (ANS_C_TYPE) value;
+            }
           }
         } else {
           ans[kk] = ANS_NA;
@@ -107,14 +112,19 @@ RETURN_TYPE METHOD_NAME_ROWS_COLS(ARGUMENTS_LIST) {
         xvalue = R_GET(x, idx, X_NA);
 #if ANS_TYPE == 'i'
         if (ok) {
-          value *= (LDOUBLE) xvalue;
-          /* Integer overflow? */
-          if (value < R_INT_MIN_d || value > R_INT_MAX_d) {
+          if (X_ISNA(xvalue)) {
             ok = 0;
-            warn = 1;
             ans[kk] = ANS_NA;
           } else {
-            ans[kk] = (ANS_C_TYPE) value;
+            value *= (LDOUBLE) xvalue;
+            /* Integer overflow? */
+            if (value < R_INT_MIN_d || value > R_INT_MAX_d) {
+              ok = 0;
+              warn = 1;
+              ans[kk] = ANS_NA;
+            } else {
+              ans[kk] = (ANS_C_TYPE) value;
+            }
           }
         } else {
           ans[kk] = ANS_NA;
