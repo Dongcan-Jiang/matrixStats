@@ -1,6 +1,8 @@
 #include "macros.h"
 
+#ifndef METHOD_TEMPLATE_H
 #define METHOD_TEMPLATE_H QUOTE_MACROS(CONCAT_MACROS(METHOD,TYPE-template.h))
+#endif
 
 #ifdef X_TYPE_I
   #define X_TYPE 'i'

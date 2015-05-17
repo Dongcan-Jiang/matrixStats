@@ -29,10 +29,10 @@
  colCumsums(x, dim.=dim(x), rows=NULL, cols=NULL, ...)
  rowCumprods(x, dim.=dim(x), rows=NULL, cols=NULL, ...)
  colCumprods(x, dim.=dim(x), rows=NULL, cols=NULL, ...)
- rowCummins(x, dim.=dim(x), ...)
- colCummins(x, dim.=dim(x), ...)
- rowCummaxs(x, dim.=dim(x), ...)
- colCummaxs(x, dim.=dim(x), ...)
+ rowCummins(x, dim.=dim(x), rows=NULL, cols=NULL, ...)
+ colCummins(x, dim.=dim(x), rows=NULL, cols=NULL, ...)
+ rowCummaxs(x, dim.=dim(x), rows=NULL, cols=NULL, ...)
+ colCummaxs(x, dim.=dim(x), rows=NULL, cols=NULL, ...)
 }
 
 \arguments{

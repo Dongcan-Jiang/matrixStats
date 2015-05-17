@@ -76,24 +76,24 @@ colCumprods <- function(x, dim.=dim(x), rows=NULL, cols=NULL, ...) {
 }
 
 
-rowCummins <- function(x, dim.=dim(x), ...) {
+rowCummins <- function(x, dim.=dim(x), rows=NULL, cols=NULL, ...) {
   dim <- as.integer(dim.);
-  .Call("rowCummins", x, dim, TRUE, PACKAGE="matrixStats")
+  .Call("rowCummins", x, dim, TRUE, rows, cols, PACKAGE="matrixStats")
 }
 
-colCummins <- function(x, dim.=dim(x), ...) {
+colCummins <- function(x, dim.=dim(x), rows=NULL, cols=NULL, ...) {
   dim <- as.integer(dim.);
-  .Call("rowCummins", x, dim, FALSE, PACKAGE="matrixStats")
+  .Call("rowCummins", x, dim, FALSE, rows, cols, PACKAGE="matrixStats")
 }
 
-rowCummaxs <- function(x, dim.=dim(x), ...) {
+rowCummaxs <- function(x, dim.=dim(x), rows=NULL, cols=NULL, ...) {
   dim <- as.integer(dim.);
-  .Call("rowCummaxs", x, dim, TRUE, PACKAGE="matrixStats")
+  .Call("rowCummaxs", x, dim, TRUE, rows, cols, PACKAGE="matrixStats")
 }
 
-colCummaxs <- function(x, dim.=dim(x), ...) {
+colCummaxs <- function(x, dim.=dim(x), rows=NULL, cols=NULL, ...) {
   dim <- as.integer(dim.);
-  .Call("rowCummaxs", x, dim, FALSE, PACKAGE="matrixStats")
+  .Call("rowCummaxs", x, dim, FALSE, rows, cols, PACKAGE="matrixStats")
 }
 
 
