@@ -1,6 +1,6 @@
 /***********************************************************************
  TEMPLATE:
-  void rowCummins_<Integer|Real>(ARGUMENTS_LIST)
+  void rowCummins_<Integer|Real>[rowsType][colsType](ARGUMENTS_LIST)
 
  ARGUMENTS_LIST:
   X_C_TYPE *x, R_xlen_t nrow, R_xlen_t ncol, int byrow, ANS_C_TYPE *ans, void *rows, R_xlen_t nrows, void *cols, R_xlen_t ncols

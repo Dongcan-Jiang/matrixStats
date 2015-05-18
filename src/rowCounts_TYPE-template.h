@@ -1,11 +1,9 @@
 /***********************************************************************
  TEMPLATE:
-  void rowCounts_<Integer|Real|Logical>[ROWS_TYPE][COLS_TYPE](X_C_TYPE *x, R_xlen_t nrow, R_xlen_t ncol, X_C_TYPE value, int narm, int hasna, int *ans, void *rows, R_xlen_t nrows, void *cols, R_xlen_t ncols)
+  void rowCounts_<Integer|Real|Logical>[ROWS_TYPE][COLS_TYPE](ARGUMENTS_LIST)
 
- GENERATES:
-  void rowCounts_Real[ROWS_TYPE][COLS_TYPE](double *x, R_xlen_t nrow, R_xlen_t ncol, double value, int narm, int hasna, int *ans, void *rows, R_xlen_t nrows, void *cols, R_xlen_t ncols)
-  void rowCounts_Integer[ROWS_TYPE][COLS_TYPE](int *x, R_xlen_t nrow, R_xlen_t ncol, int value, int narm, int hasna, int *ans, void *rows, R_xlen_t nrows, void *cols, R_xlen_t ncols)
-  void rowCounts_Logical[ROWS_TYPE][COLS_TYPE](int *x, R_xlen_t nrow, R_xlen_t ncol, int value, int narm, int hasna, int *ans, void *rows, R_xlen_t nrows, void *cols, R_xlen_t ncols)
+ ARGUMENTS_LIST:
+  X_C_TYPE *x, R_xlen_t nrow, R_xlen_t ncol, X_C_TYPE value, int what, int narm, int hasna, int *ans, void *rows, R_xlen_t nrows, void *cols, R_xlen_t ncols
 
  Arguments:
    The following macros ("arguments") should be defined for the 
