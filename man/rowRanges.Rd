@@ -22,11 +22,11 @@
 }
 
 \usage{
-  rowRanges(x, rows=NULL, cols=NULL, na.rm=FALSE, dim.=dim(x), ...)
+  rowRanges(x, na.rm=FALSE, dim.=dim(x), rows=NULL, cols=NULL, ...)
   colRanges(x, na.rm=FALSE, dim.=dim(x), ...)
-  rowMins(x, na.rm=FALSE, dim.=dim(x), ...)
+  rowMins(x, na.rm=FALSE, dim.=dim(x), rows=NULL, cols=NULL, ...)
   colMins(x, na.rm=FALSE, dim.=dim(x), ...)
-  rowMaxs(x, na.rm=FALSE, dim.=dim(x), ...)
+  rowMaxs(x, na.rm=FALSE, dim.=dim(x), rows=NULL, cols=NULL, ...)
   colMaxs(x, na.rm=FALSE, dim.=dim(x), ...)
 }
 

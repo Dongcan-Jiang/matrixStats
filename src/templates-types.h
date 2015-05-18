@@ -166,18 +166,20 @@
 
 
 #undef NUM_OF_ROWS
+#undef ROW_INDEX_NONA
 #undef ROW_INDEX
 #undef ROWS_C_TYPE
 #undef METHOD_NAME_ROWS
 
 #undef NUM_OF_COLS
+#undef COL_INDEX_NONA
 #undef COL_INDEX
 #undef COLS_C_TYPE
 #undef METHOD_NAME_ROWS_COLS
 
 #ifdef ROWS_TYPE
   #define NUM_OF_ROWS nrows
-//  #define ROW_INDEX(rows, ii) ((R_xlen_t)rows[ii]-1)
+  #define ROW_INDEX_NONA(rows, ii) ((R_xlen_t)rows[ii]-1)
   #if ROWS_TYPE == 'i'
     #define ROWS_C_TYPE int
     #define ROW_INDEX(rows, ii) (rows[ii] == NA_INTEGER ? NA_R_XLEN_T : (R_xlen_t)rows[ii]-1)
@@ -191,6 +193,7 @@
   #endif
 #else
   #define NUM_OF_ROWS nrow
+  #define ROW_INDEX_NONA(rows, ii) ii
   #define ROW_INDEX(rows, ii) ii
   #define ROWS_C_TYPE void
   #define METHOD_NAME_ROWS CONCAT_MACROS(METHOD_NAME, noRows)
@@ -198,7 +201,7 @@
 
 #ifdef COLS_TYPE
   #define NUM_OF_COLS ncols
-//  #define COL_INDEX(cols, jj) ((R_xlen_t)cols[jj]-1)
+  #define COL_INDEX_NONA(cols, jj) ((R_xlen_t)cols[jj]-1)
   #if COLS_TYPE == 'i'
     #define COLS_C_TYPE int
     #define COL_INDEX(cols, jj) (cols[jj] == NA_INTEGER ? NA_R_XLEN_T : (R_xlen_t)cols[jj]-1)
@@ -212,6 +215,7 @@
   #endif
 #else
   #define NUM_OF_COLS ncol
+  #define COL_INDEX_NONA(cols, jj) jj
   #define COL_INDEX(cols, jj) jj
   #define COLS_C_TYPE void
   #define METHOD_NAME_ROWS_COLS CONCAT_MACROS(METHOD_NAME_ROWS, noCols)

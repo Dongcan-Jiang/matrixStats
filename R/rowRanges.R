@@ -54,26 +54,22 @@
 # @keyword robust
 # @keyword univar
 #*/###########################################################################
-rowRanges <- function(x, rows=NULL, cols=NULL, na.rm=FALSE, dim.=dim(x), ...) {
-  if (!is.null(rows) && !is.null(cols)) x <- x[rows,cols,drop=FALSE]
-  else if (!is.null(rows)) x <- x[rows,,drop=FALSE]
-  else if (!is.null(cols)) x <- x[,cols,drop=FALSE]
-
+rowRanges <- function(x, na.rm=FALSE, dim.=dim(x), rows=NULL, cols=NULL, ...) {
   dim. <- as.integer(dim.)
   na.rm <- as.logical(na.rm)
-  .Call("rowRanges", x, dim., 2L, na.rm, TRUE, PACKAGE="matrixStats")
+  .Call("rowRanges", x, dim., 2L, na.rm, TRUE, rows, cols, PACKAGE="matrixStats")
 }
 
-rowMins <- function(x, na.rm=FALSE, dim.=dim(x), ...) {
+rowMins <- function(x, na.rm=FALSE, dim.=dim(x), rows=NULL, cols=NULL, ...) {
   dim. <- as.integer(dim.)
   na.rm <- as.logical(na.rm)
-  .Call("rowRanges", x, dim., 0L, na.rm, TRUE, PACKAGE="matrixStats")
+  .Call("rowRanges", x, dim., 0L, na.rm, TRUE, rows, cols, PACKAGE="matrixStats")
 }
 
-rowMaxs <- function(x, na.rm=FALSE, dim.=dim(x), ...) {
+rowMaxs <- function(x, na.rm=FALSE, dim.=dim(x), rows=NULL, cols=NULL, ...) {
   dim. <- as.integer(dim.)
   na.rm <- as.logical(na.rm)
-  .Call("rowRanges", x, dim., 1L, na.rm, TRUE, PACKAGE="matrixStats")
+  .Call("rowRanges", x, dim., 1L, na.rm, TRUE, rows, cols, PACKAGE="matrixStats")
 }
 
 
