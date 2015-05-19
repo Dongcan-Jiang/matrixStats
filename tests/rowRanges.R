@@ -214,5 +214,14 @@ for (rows in indexCases) {
 
     validateIndicesTestMatrix(x, rows, cols, ftest=rowMaxs, fsure=rowMaxs_R, na.rm=TRUE)
     validateIndicesTestMatrix(x, rows, cols, ftest=rowMaxs, fsure=rowMaxs_R, na.rm=FALSE)
+
+    validateIndicesTestMatrix(x, rows, cols, fcolTest=colRanges, fsure=rowRanges_R, na.rm=TRUE)
+    validateIndicesTestMatrix(x, rows, cols, fcolTest=colRanges, fsure=rowRanges_R, na.rm=FALSE)
+
+    validateIndicesTestMatrix(x, rows, cols, fcolTest=colMins, fsure=rowMins_R, na.rm=TRUE)
+    validateIndicesTestMatrix(x, rows, cols, fcolTest=colMins, fsure=rowMins_R, na.rm=FALSE)
+
+    validateIndicesTestMatrix(x, rows, cols, fcolTest=colMaxs, fsure=rowMaxs_R, na.rm=TRUE)
+    validateIndicesTestMatrix(x, rows, cols, fcolTest=colMaxs, fsure=rowMaxs_R, na.rm=FALSE)
   }
 }

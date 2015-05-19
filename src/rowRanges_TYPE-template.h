@@ -61,6 +61,7 @@ RETURN_TYPE METHOD_NAME_ROWS_COLS(ARGUMENTS_LIST) {
 
       for (jj=0; jj < ncols; jj++) {
         colBegin = R_INDEX_OP(COL_INDEX(ccols,jj), *, nrow);
+
         for (ii=0; ii < nrows; ii++) {
           if (!narm && skip[ii]) continue;
 
