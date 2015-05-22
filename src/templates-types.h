@@ -165,20 +165,17 @@
 #endif
 
 
-#undef NUM_OF_ROWS
 #undef ROW_INDEX_NONA
 #undef ROW_INDEX
 #undef ROWS_C_TYPE
 #undef METHOD_NAME_ROWS
 
-#undef NUM_OF_COLS
 #undef COL_INDEX_NONA
 #undef COL_INDEX
 #undef COLS_C_TYPE
 #undef METHOD_NAME_ROWS_COLS
 
 #ifdef ROWS_TYPE
-  #define NUM_OF_ROWS nrows
   #define ROW_INDEX_NONA(rows, ii) ((R_xlen_t)rows[ii]-1)
   #if ROWS_TYPE == 'i'
     #define ROWS_C_TYPE int
@@ -192,7 +189,6 @@
     #error "INTERNAL ERROR: Failed to set C macro METHOD_NAME: Unknown ROWS_TYPE"
   #endif
 #else
-  #define NUM_OF_ROWS nrow
   #define ROW_INDEX_NONA(rows, ii) ii
   #define ROW_INDEX(rows, ii) ii
   #define ROWS_C_TYPE void
@@ -200,7 +196,6 @@
 #endif
 
 #ifdef COLS_TYPE
-  #define NUM_OF_COLS ncols
   #define COL_INDEX_NONA(cols, jj) ((R_xlen_t)cols[jj]-1)
   #if COLS_TYPE == 'i'
     #define COLS_C_TYPE int
@@ -214,7 +209,6 @@
     #error "INTERNAL ERROR: Failed to set C macro METHOD_NAME: Unknown ROWS_TYPE"
   #endif
 #else
-  #define NUM_OF_COLS ncol
   #define COL_INDEX_NONA(cols, jj) jj
   #define COL_INDEX(cols, jj) jj
   #define COLS_C_TYPE void
