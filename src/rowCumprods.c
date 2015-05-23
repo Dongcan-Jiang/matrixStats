@@ -1,7 +1,6 @@
 /***************************************************************************
  Public methods:
- SEXP rowCumprods(SEXP x, SEXP naRm, SEXP hasNA)
- SEXP colCumprods(SEXP x, SEXP naRm, SEXP hasNA)
+ SEXP rowCumprods(SEXP x, ...)
 
  Authors: Henrik Bengtsson
 

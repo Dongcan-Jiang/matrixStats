@@ -1,6 +1,6 @@
 /***********************************************************************
  TEMPLATE:
-  void rowMedians_<Integer|Real>(...)
+  void rowMedians_<Integer|Real>[rowsType][colsType](ARGUMENTS_LIST)
 
  ARGUMENTS_LIST:
   X_C_TYPE *x, R_xlen_t nrow, R_xlen_t ncol, int narm, int hasna, int byrow, double *ans, void *rows, R_xlen_t nrows, void *cols, R_xlen_t ncols
@@ -28,7 +28,7 @@
 #include "templates-types.h"
 
 
-void METHOD_NAME_ROWS_COLS(ARGUMENTS_LIST) {
+RETURN_TYPE METHOD_NAME_ROWS_COLS(ARGUMENTS_LIST) {
   int isOdd;
   R_xlen_t ii, jj, kk, qq, idx;
   R_xlen_t *colOffset;

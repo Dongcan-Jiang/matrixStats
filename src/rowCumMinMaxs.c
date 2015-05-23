@@ -1,7 +1,6 @@
 /***************************************************************************
  Public methods:
- SEXP rowCummins(SEXP x, SEXP naRm, SEXP hasNA)
- SEXP colCummins(SEXP x, SEXP naRm, SEXP hasNA)
+ SEXP rowCummins(SEXP x, ...)
 
  Authors: Henrik Bengtsson
 
