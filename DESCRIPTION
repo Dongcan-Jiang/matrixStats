@@ -3,7 +3,8 @@ Version: 0.14.9-9000
 Depends:
   R (>= 2.9.0)
 Imports:
-  methods
+  methods,
+  parallel
 Suggests:
   base64enc,
   ggplot2,

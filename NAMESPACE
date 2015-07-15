@@ -7,7 +7,7 @@ importFrom("methods", "setMethod")
 importFrom("methods", "setGeneric")
 importFrom("methods", "loadMethod")
 importFrom("methods", "signature")
-
+importFrom("parallel", "mclapply")
 importFrom("stats", "mad")
 importFrom("stats", "quantile")
 
