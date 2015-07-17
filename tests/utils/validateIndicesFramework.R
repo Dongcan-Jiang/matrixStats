@@ -26,15 +26,23 @@ validateIndicesTestVector_w <- function(x, w, idxs, ftest, fsure, debug=FALSE, .
   stopifnot(all.equal(actual, expect))
 }
 
-validateIndicesTestMatrix <- function(x, rows, cols, ftest, fcolTest, fsure, debug=FALSE, ...) {
+validateIndicesTestMatrix <- function(x, rows, cols, ftest, fcolTest, fsure, mc.cores=NULL, debug=FALSE, ...) {
   if (debug) cat(sprintf("rows=%s; type=%s\n", toString(rows), toString(typeof(rows))))
   if (debug) cat(sprintf("cols=%s; type=%s\n", toString(cols), toString(typeof(cols))))
 
   suppressWarnings({
     if (missing(fcolTest)) {
-      actual <- tryCatch(ftest(x,rows=rows,cols=cols,...), error=function(c) "error")
+      if (is.null(mc.cores)) {
+        actual <- tryCatch(ftest(x,rows=rows,cols=cols,...), error=function(c) "error")
+      } else {
+        actual <- tryCatch(ftest(x,rows=rows,cols=cols,mc.cores=mc.cores,...), error=function(c) "error")
+      }
     } else {
-      actual <- tryCatch(fcolTest(t(x),rows=cols,cols=rows,...), error=function(c) "error")
+      if (is.null(mc.cores)) {
+        actual <- tryCatch(fcolTest(t(x),rows=cols,cols=rows,...), error=function(c) "error")
+      } else {
+        actual <- tryCatch(fcolTest(t(x),rows=cols,cols=rows,mc.cores=mc.cores,...), error=function(c) "error")
+      }
     }
 
     if (is.null(rows)) rows <- seq_len(dim(x)[1])
@@ -46,15 +54,23 @@ validateIndicesTestMatrix <- function(x, rows, cols, ftest, fcolTest, fsure, deb
   stopifnot(all.equal(actual, expect))
 }
 
-validateIndicesTestMatrix_w <- function(x, w, rows, cols, ftest, fcolTest, fsure, debug=FALSE, ...) {
+validateIndicesTestMatrix_w <- function(x, w, rows, cols, ftest, fcolTest, fsure, mc.cores=NULL, debug=FALSE, ...) {
   if (debug) cat(sprintf("rows=%s; type=%s\n", toString(rows), toString(typeof(rows))))
   if (debug) cat(sprintf("cols=%s; type=%s\n", toString(cols), toString(typeof(cols))))
 
   suppressWarnings({
     if (missing(fcolTest)) {
-      actual <- tryCatch(ftest(x,w,rows=rows,cols=cols,...), error=function(c) "error")
+      if (is.null(mc.cores)) {
+        actual <- tryCatch(ftest(x,w,rows=rows,cols=cols,...), error=function(c) "error")
+      } else {
+        actual <- tryCatch(ftest(x,w,rows=rows,cols=cols,mc.cores=mc.cores,...), error=function(c) "error")
+      }
     } else {
-      actual <- tryCatch(fcolTest(t(x),w,rows=cols,cols=rows,...), error=function(c) "error")
+      if (is.null(mc.cores)) {
+        actual <- tryCatch(fcolTest(t(x),w,rows=cols,cols=rows,...), error=function(c) "error")
+      } else {
+        actual <- tryCatch(fcolTest(t(x),w,rows=cols,cols=rows,mc.cores=mc.cores,...), error=function(c) "error")
+      }
     }
 
     if (is.null(rows)) rows <- seq_len(dim(x)[1])
@@ -65,7 +81,6 @@ validateIndicesTestMatrix_w <- function(x, w, rows, cols, ftest, fcolTest, fsure
 
   stopifnot(all.equal(actual, expect))
 }
-
 
 indexCases <- list()
 # negative indices with duplicates
