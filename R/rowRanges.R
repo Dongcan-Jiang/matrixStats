@@ -71,13 +71,13 @@ rowRanges <- function(x, rows=NULL, cols=NULL, na.rm=FALSE, dim.=dim(x), mc.core
     if (nrow > 1L) {
       # Calculate how many cores are actually needed
       if (mc.cores > nrow) mc.cores <- nrow
-      ranges <- .splitIndexRanges(nrow, mc.cores)
+      ranges <- splitIndices(nrow, mc.cores)
 
       hasWarning <- FALSE
       y <- withCallingHandlers(mclapply(ranges, FUN=function(range) {
         # Generate rows from ranges
-        if (is.null(rows)) subRows <- range[1]:range[2]
-        else subRows <- rows[range[1]:range[2]]
+        if (is.null(rows)) subRows <- range
+        else subRows <- rows[range]
         # Call itself to run on one core
         rowRanges(x, rows=subRows, cols=cols, na.rm=na.rm, dim.=dim., mc.cores=1L, ...)
       }, mc.cores=mc.cores), warning=function(w) hasWarning <<- TRUE)
@@ -110,13 +110,13 @@ rowMins <- function(x, rows=NULL, cols=NULL, na.rm=FALSE, dim.=dim(x), mc.cores=
     if (nrow > 1L) {
       # Calculate how many cores are actually needed
       if (mc.cores > nrow) mc.cores <- nrow
-      ranges <- .splitIndexRanges(nrow, mc.cores)
+      ranges <- splitIndices(nrow, mc.cores)
 
       hasWarning <- FALSE
       y <- withCallingHandlers(mclapply(ranges, FUN=function(range) {
         # Generate rows from ranges
-        if (is.null(rows)) subRows <- range[1]:range[2]
-        else subRows <- rows[range[1]:range[2]]
+        if (is.null(rows)) subRows <- range
+        else subRows <- rows[range]
         # Call itself to run on one core
         rowMins(x, rows=subRows, cols=cols, na.rm=na.rm, dim.=dim., mc.cores=1L, ...)
       }, mc.cores=mc.cores), warning=function(w) hasWarning <<- TRUE)
@@ -149,13 +149,13 @@ rowMaxs <- function(x, rows=NULL, cols=NULL, na.rm=FALSE, dim.=dim(x), mc.cores=
     if (nrow > 1L) {
       # Calculate how many cores are actually needed
       if (mc.cores > nrow) mc.cores <- nrow
-      ranges <- .splitIndexRanges(nrow, mc.cores)
+      ranges <- splitIndices(nrow, mc.cores)
 
       hasWarning <- FALSE
       y <- withCallingHandlers(mclapply(ranges, FUN=function(range) {
         # Generate rows from ranges
-        if (is.null(rows)) subRows <- range[1]:range[2]
-        else subRows <- rows[range[1]:range[2]]
+        if (is.null(rows)) subRows <- range
+        else subRows <- rows[range]
         # Call itself to run on one core
         rowMaxs(x, rows=subRows, cols=cols, na.rm=na.rm, dim.=dim., mc.cores=1L, ...)
       }, mc.cores=mc.cores), warning=function(w) hasWarning <<- TRUE)
@@ -189,13 +189,13 @@ colRanges <- function(x, rows=NULL, cols=NULL, na.rm=FALSE, dim.=dim(x), mc.core
     if (ncol > 1L) {
       # Calculate how many cores are actually needed
       if (mc.cores > ncol) mc.cores <- ncol
-      ranges <- .splitIndexRanges(ncol, mc.cores)
+      ranges <- splitIndices(ncol, mc.cores)
 
       hasWarning <- FALSE
       y <- withCallingHandlers(mclapply(ranges, FUN=function(range) {
         # Generate cols from ranges
-        if (is.null(cols)) subCols <- range[1]:range[2]
-        else subCols <- cols[range[1]:range[2]]
+        if (is.null(cols)) subCols <- range
+        else subCols <- cols[range]
         # Call itself to run on one core
         colRanges(x, rows=rows, cols=subCols, na.rm=na.rm, dim.=dim., mc.cores=1L, ...)
       }, mc.cores=mc.cores), warning=function(w) hasWarning <<- TRUE)
@@ -228,13 +228,13 @@ colMins <- function(x, rows=NULL, cols=NULL, na.rm=FALSE, dim.=dim(x), mc.cores=
     if (ncol > 1L) {
       # Calculate how many cores are actually needed
       if (mc.cores > ncol) mc.cores <- ncol
-      ranges <- .splitIndexRanges(ncol, mc.cores)
+      ranges <- splitIndices(ncol, mc.cores)
 
       hasWarning <- FALSE
       y <- withCallingHandlers(mclapply(ranges, FUN=function(range) {
         # Generate cols from ranges
-        if (is.null(cols)) subCols <- range[1]:range[2]
-        else subCols <- cols[range[1]:range[2]]
+        if (is.null(cols)) subCols <- range
+        else subCols <- cols[range]
         # Call itself to run on one core
         colMins(x, rows=rows, cols=subCols, na.rm=na.rm, dim.=dim., mc.cores=1L, ...)
       }, mc.cores=mc.cores), warning=function(w) hasWarning <<- TRUE)
@@ -267,13 +267,13 @@ colMaxs <- function(x, rows=NULL, cols=NULL, na.rm=FALSE, dim.=dim(x), mc.cores=
     if (ncol > 1L) {
       # Calculate how many cores are actually needed
       if (mc.cores > ncol) mc.cores <- ncol
-      ranges <- .splitIndexRanges(ncol, mc.cores)
+      ranges <- splitIndices(ncol, mc.cores)
 
       hasWarning <- FALSE
       y <- withCallingHandlers(mclapply(ranges, FUN=function(range) {
         # Generate cols from ranges
-        if (is.null(cols)) subCols <- range[1]:range[2]
-        else subCols <- cols[range[1]:range[2]]
+        if (is.null(cols)) subCols <- range
+        else subCols <- cols[range]
         # Call itself to run on one core
         colMaxs(x, rows=rows, cols=subCols, na.rm=na.rm, dim.=dim., mc.cores=1L, ...)
       }, mc.cores=mc.cores), warning=function(w) hasWarning <<- TRUE)
